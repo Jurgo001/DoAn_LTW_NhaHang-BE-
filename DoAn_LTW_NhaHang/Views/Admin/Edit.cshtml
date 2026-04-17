@@ -1,0 +1,117 @@
+﻿@using DoAn_LTW_NhaHang.Models
+@model tblMonAn
+
+@{
+    ViewBag.Title = "Cập nhật món ăn";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Admin")" class="text-decoration-none">Danh sách món</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Cập nhật món</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+                    <h4 class="fw-bold text-primary m-0">
+                        <i class="fas fa-edit me-2"></i>Cập Nhật Món Ăn
+                    </h4>
+                    <p class="text-muted small mt-1">Chỉnh sửa thông tin chi tiết cho món: <b>@Model.TenMon</b></p>
+                </div>
+
+                <div class="card-body p-4">
+                    @using (Html.BeginForm("Edit", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.MaMon)
+                        @Html.HiddenFor(model => model.AnhDaiDien) <div class="row g-4">
+                            <div class="col-md-4 text-center">
+                                <div class="p-3 bg-light rounded-3 border border-dashed text-center h-100 d-flex flex-column justify-content-center align-items-center">
+                                    <label class="form-label fw-bold mb-3 text-secondary">Ảnh hiển thị</label>
+
+                                    <div class="position-relative mb-3">
+                                        <img src="@Url.Content("~/Content/Images/" + Model.AnhDaiDien)"
+                                             class="img-fluid rounded-3 shadow-sm"
+                                             style="max-height: 200px; object-fit: cover;"
+                                             id="previewImage"
+                                             onerror="this.src='https://via.placeholder.com/200x200?text=No+Image'" />
+                                    </div>
+
+                                    <div class="w-100">
+                                        <label for="fileUpload" class="btn btn-outline-primary btn-sm w-100">
+                                            <i class="fas fa-camera me-1"></i> Chọn ảnh mới
+                                        </label>
+                                        <input type="file" name="fileUpload" id="fileUpload" class="d-none" onchange="previewFile(this);" />
+                                        <small class="d-block text-muted mt-2" style="font-size: 0.75rem;">Chấp nhận: JPG, PNG, JPEG</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-8">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold text-secondary">Tên món ăn <span class="text-danger">*</span></label>
+                                        @Html.EditorFor(model => model.TenMon, new { htmlAttributes = new { @class = "form-control form-control-lg bg-light", placeholder = "Nhập tên món..." } })
+                                        @Html.ValidationMessageFor(model => model.TenMon, "", new { @class = "text-danger small" })
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold text-secondary">Loại món</label>
+                                        @Html.DropDownList("MaLoai", null, htmlAttributes: new { @class = "form-select form-select-lg bg-light" })
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold text-secondary">Giá bán (VNĐ) <span class="text-danger">*</span></label>
+                                        <div class="input-group input-group-lg">
+                                            @Html.EditorFor(model => model.DonGia, new { htmlAttributes = new { @class = "form-control fw-bold text-success bg-light", type = "number" } })
+                                            <span class="input-group-text bg-light fw-bold text-success">đ</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-bold text-secondary">Nhà cung cấp</label>
+                                        @Html.DropDownList("MaNCC", null, htmlAttributes: new { @class = "form-select bg-light" })
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold text-secondary">Mô tả chi tiết</label>
+                                        <textarea class="form-control bg-light" name="MoTa" rows="4" placeholder="Mô tả thành phần, hương vị...">@Model.MoTa</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4 border-light">
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="@Url.Action("Index")" class="btn btn-light border px-4">
+                                <i class="fas fa-times me-1"></i> Hủy bỏ
+                            </a>
+                            <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm">
+                                <i class="fas fa-save me-1"></i> Lưu Thay Đổi
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewFile(input) {
+        var file = input.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                document.getElementById("previewImage").src = reader.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+</script>

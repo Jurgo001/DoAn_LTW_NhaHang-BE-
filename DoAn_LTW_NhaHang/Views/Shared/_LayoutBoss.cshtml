@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - BOSS CONTROL</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --sidebar-bg: #1e293b;
+            --sidebar-text: #e2e8f0;
+            --accent-color: #f59e0b;
+            --hover-bg: #334155;
+            --body-bg: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--body-bg);
+        }
+
+        /* --- SIDEBAR STYLE --- */
+        .sidebar {
+            min-height: 100vh;
+            width: 280px;
+            background: linear-gradient(180deg, var(--sidebar-bg) 0%, #0f172a 100%);
+            color: var(--sidebar-text);
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            padding: 30px 20px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+        }
+
+            .sidebar-brand i {
+                margin-right: 10px;
+                color: var(--accent-color);
+            }
+
+        .sidebar-menu {
+            padding: 20px 0;
+            list-style: none;
+            margin: 0;
+        }
+
+            .sidebar-menu li {
+                margin-bottom: 5px;
+            }
+
+            .sidebar-menu a {
+                color: #94a3b8;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                padding: 15px 25px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                border-left: 4px solid transparent;
+            }
+
+                .sidebar-menu a:hover {
+                    background-color: var(--hover-bg);
+                    color: white;
+                    padding-left: 30px;
+                }
+
+                .sidebar-menu a.active {
+                    background-color: rgba(245, 158, 11, 0.1);
+                    color: var(--accent-color);
+                    border-left: 4px solid var(--accent-color);
+                }
+
+        .sidebar-heading {
+            padding: 10px 25px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 700;
+            margin-top: 15px;
+        }
+
+        /* --- CONTENT AREA --- */
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Custom Card & Button */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #f1f5f9;
+            font-weight: 600;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-crown"></i> BOSS PANEL
+        </div>
+
+        <ul class="sidebar-menu">
+            <div class="sidebar-heading">QUẢN LÝ</div>
+
+            <li>
+                <a href="@Url.Action("Index", "NhanVien")" class="@(ViewContext.RouteData.Values["Action"].ToString() == "Index" || ViewContext.RouteData.Values["Action"].ToString() == "Edit" || ViewContext.RouteData.Values["Action"].ToString() == "Create" ? "active" : "")">
+                    <i class="fas fa-users-cog me-2"></i> Quản lý Nhân viên
+                </a>
+            </li>
+
+            <li>
+                <a href="@Url.Action("QuanLyKhachHang", "NhanVien")" class="@(ViewContext.RouteData.Values["Action"].ToString() == "QuanLyKhachHang" || ViewContext.RouteData.Values["Action"].ToString() == "SuaKhachHang" || ViewContext.RouteData.Values["Action"].ToString() == "ThemKhachHang" ? "active" : "")">
+                    <i class="fas fa-users me-2"></i> Quản lý Khách hàng
+                </a>
+            </li>
+
+            <div class="sidebar-heading">KHUYẾN MÃI & QUÀ TẶNG</div>
+
+            <li>
+                <a href="@Url.Action("QuanLyVoucher", "NhanVien")" class="@(ViewContext.RouteData.Values["Action"].ToString() == "QuanLyVoucher" ? "active" : "")">
+                    <i class="fas fa-ticket-alt me-2"></i> Quản lý Voucher
+                </a>
+            </li>
+
+            <div class="sidebar-heading">HỆ THỐNG</div>
+            <li>
+                <a href="@Url.Action("Index", "Admin")">
+                    <i class="fas fa-arrow-circle-right me-2"></i> Vào trang Admin
+                </a>
+            </li>
+        </ul>
+
+        <div class="mt-auto pb-4 w-100 text-center">
+            <hr style="border-color: #334155; margin: 20px 0;">
+            <a href="@Url.Action("Logout", "User")" class="text-danger text-decoration-none fw-bold">
+                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <div>
+                <h5 class="m-0 text-dark fw-bold">@ViewBag.Title</h5>
+                <small class="text-muted">Hệ thống quản trị cấp cao</small>
+            </div>
+            <div class="user-profile">
+                <div class="text-end me-2">
+                    <div class="fw-bold text-dark">Ông chủ</div>
+                    <div style="font-size: 12px; color: var(--accent-color);">Super Admin</div>
+                </div>
+                <div class="user-avatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid p-0">
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,284 @@
+﻿@model IEnumerable<DoAn_LTW_NhaHang.tblKhachHang>
+@{
+    ViewBag.Title = "Quản lý khách hàng";
+    Layout = "~/Views/Shared/_LayoutBoss.cshtml";
+}
+
+<style>
+    /* --- CSS Copy từ trang Nhân Viên --- */
+    .card-boss {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        overflow: hidden;
+        background-color: white;
+    }
+
+    .card-header-boss {
+        background: linear-gradient(90deg, #1e293b 0%, #334155 100%);
+        padding: 20px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #3b82f6;
+    }
+
+    .btn-boss-add {
+        background: linear-gradient(45deg, #3b82f6, #2563eb);
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+
+        .btn-boss-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+            color: white;
+        }
+
+    .table-boss {
+        margin-bottom: 0;
+        border-color: #f1f5f9;
+    }
+
+        .table-boss thead th {
+            background-color: #f8fafc;
+            color: #64748b;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 15px;
+        }
+
+        .table-boss tbody td {
+            padding: 15px;
+            vertical-align: middle;
+            color: #334155;
+            font-weight: 500;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .table-boss tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #eff6ff;
+        color: #3b82f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 10px;
+        text-transform: uppercase;
+        border: 1px solid #dbeafe;
+    }
+
+    .btn-icon {
+        width: 35px;
+        height: 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        transition: all 0.2s;
+        border: none;
+    }
+
+    .btn-edit {
+        background-color: #e0f2fe;
+        color: #0284c7;
+    }
+
+        .btn-edit:hover {
+            background-color: #0284c7;
+            color: white;
+        }
+
+    .btn-delete {
+        background-color: #fee2e2;
+        color: #dc2626;
+    }
+
+        .btn-delete:hover {
+            background-color: #dc2626;
+            color: white;
+        }
+
+    /* Custom Checkbox */
+    .custom-checkbox {
+        accent-color: #3b82f6; /* Màu xanh cho hợp với trang Khách hàng */
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="card card-boss">
+        <div class="card-header-boss">
+            <div>
+                <h5 class="m-0 fw-bold text-white text-uppercase">
+                    <i class="fas fa-users me-2 text-info"></i> Danh sách khách hàng
+                </h5>
+                <small class="text-white-50">Quản lý thông tin và tài khoản khách hàng</small>
+            </div>
+            <a href="@Url.Action("ThemKhachHang")" class="btn-boss-add">
+                <i class="fas fa-user-plus me-2"></i> Thêm Khách Hàng
+            </a>
+        </div>
+
+        <div class="card-body p-0">
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-success m-3 border-0 shadow-sm"><i class="fas fa-check-circle me-2"></i>@TempData["Message"]</div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger m-3 border-0 shadow-sm"><i class="fas fa-exclamation-triangle me-2"></i>@TempData["Error"]</div>
+            }
+
+            @using (Html.BeginForm("XoaNhieuKhachHang", "NhanVien", FormMethod.Post, new { id = "formDelete" }))
+            {
+                <div class="table-responsive">
+                    <table class="table table-boss align-middle" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 50px;">
+                                    <input type="checkbox" id="checkAll" class="custom-checkbox" />
+                                </th>
+                                <th class="ps-3">Thông tin khách hàng</th>
+                                <th>Địa chỉ / Giao hàng</th>
+                                <th>Tài khoản Email</th>
+                                <th class="text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    string firstLetter = !string.IsNullOrEmpty(item.TenKH) ? item.TenKH.Substring(0, 1) : "K";
+
+                                    <tr>
+                                        <td class="text-center">
+                                            <input type="checkbox" name="selectedIds" value="@item.MaKH" class="checkItem custom-checkbox" />
+                                        </td>
+
+                                        <td class="ps-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-circle">
+                                                    @firstLetter
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-dark">@item.TenKH</div>
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-phone-alt me-1" style="font-size: 0.75rem;"></i>
+                                                        @(string.IsNullOrEmpty(item.DienThoai) ? "Chưa có SĐT" : item.DienThoai)
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.DiaChi))
+                                            {
+                                                <span class="text-dark"><i class="fas fa-map-marker-alt text-danger me-2 opacity-50"></i>@item.DiaChi</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted fst-italic">-- Chưa cập nhật --</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <span class="text-primary fw-bold bg-light px-2 py-1 rounded small">
+                                                <i class="fas fa-envelope me-1"></i> @item.Email
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="@Url.Action("SuaKhachHang", new { id = item.MaKH })" class="btn btn-icon btn-edit me-1" title="Sửa thông tin">
+                                                <i class="fas fa-pen"></i>
+                                            </a>
+                                            <a href="@Url.Action("XoaKhachHang", new { id = item.MaKH })" class="btn btn-icon btn-delete" title="Xóa khách hàng" onclick="return confirm('Cảnh báo: Xóa khách hàng sẽ xóa cả lịch sử voucher của họ. Nếu khách đã có đơn hàng thì không thể xóa!\n\nBạn có chắc chắn muốn xóa?');">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="fas fa-user-slash fa-2x mb-3 d-block opacity-50"></i>
+                                        Chưa có khách hàng nào trong hệ thống.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-3 bg-light border-top d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fst-italic me-3">
+                            <i class="fas fa-info-circle me-1"></i> Tổng: <b>@Model.Count()</b> khách
+                        </small>
+                        <small class="text-primary fw-bold">
+                            Đã chọn: <span id="countSelected" class="fs-6">0</span>
+                        </small>
+                    </div>
+
+                    <button type="submit" id="btnDelete" class="btn btn-outline-danger btn-sm disabled" onclick="return confirm('CẢNH BÁO QUAN TRỌNG:\n- Khách hàng đã có đơn hàng sẽ KHÔNG bị xóa.\n- Khách hàng chưa có đơn hàng sẽ bị xóa vĩnh viễn kèm theo lịch sử voucher.\n\nBạn có chắc chắn muốn tiếp tục?');">
+                        <i class="fa fa-trash-alt me-2"></i> Xóa các mục đã chọn
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    // Logic Checkbox & Đếm số lượng (Giống hệt trang Nhân viên)
+    const checkAll = document.getElementById('checkAll');
+    const checkboxes = document.querySelectorAll('.checkItem');
+    const btnDelete = document.getElementById('btnDelete');
+    const countSpan = document.getElementById('countSelected');
+
+    function updateState() {
+        let count = 0;
+        checkboxes.forEach(cb => {
+            if (cb.checked) count++;
+        });
+
+        countSpan.textContent = count;
+
+        if (count > 0) {
+            btnDelete.classList.remove('disabled');
+        } else {
+            btnDelete.classList.add('disabled');
+        }
+    }
+
+    if (checkAll) {
+        checkAll.addEventListener('change', function () {
+            checkboxes.forEach(cb => {
+                cb.checked = this.checked;
+            });
+            updateState();
+        });
+    }
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateState);
+    });
+</script>

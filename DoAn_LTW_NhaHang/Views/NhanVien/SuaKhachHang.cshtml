@@ -1,0 +1,48 @@
+﻿@model DoAn_LTW_NhaHang.tblKhachHang
+@{
+    ViewBag.Title = "Sửa khách hàng";
+    Layout = "~/Views/Shared/_LayoutBoss.cshtml";
+}
+
+<div class="card shadow-sm w-75 mx-auto">
+    <div class="card-header bg-info text-white fw-bold">
+        <i class="fas fa-user-edit"></i> CHỈNH SỬA KHÁCH HÀNG #@Model.MaKH
+    </div>
+    <div class="card-body">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.MaKH)
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label>Họ và tên</label>
+                    @Html.EditorFor(model => model.TenKH, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                </div>
+                <div class="col-md-6">
+                    <label>Số điện thoại</label>
+                    @Html.EditorFor(model => model.DienThoai, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="col-12">
+                    <label>Địa chỉ</label>
+                    @Html.EditorFor(model => model.DiaChi, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="col-md-6">
+                    <label>Email (Tài khoản)</label>
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-6">
+                    <label class="text-danger">Đổi mật khẩu (Để trống nếu giữ nguyên)</label>
+                    <input type="password" name="MatKhau" class="form-control" placeholder="Nhập mật khẩu mới..." />
+                </div>
+            </div>
+
+            <div class="mt-4 text-end">
+                <a href="@Url.Action("QuanLyKhachHang")" class="btn btn-secondary me-2">Hủy bỏ</a>
+                <button type="submit" class="btn btn-info px-4 text-white"><i class="fas fa-save"></i> Cập nhật</button>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,283 @@
+﻿@model IEnumerable<DoAn_LTW_NhaHang.tblNhanVien>
+@{
+    ViewBag.Title = "Quản lý nhân sự";
+    Layout = "~/Views/Shared/_LayoutBoss.cshtml";
+}
+
+<style>
+    /* CSS Riêng cho Bảng Boss */
+    .card-boss {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        overflow: hidden;
+        background-color: white;
+    }
+
+    .card-header-boss {
+        background: linear-gradient(90deg, #0f172a 0%, #334155 100%);
+        padding: 20px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #f59e0b;
+    }
+
+    .btn-boss-add {
+        background: linear-gradient(45deg, #f59e0b, #d97706);
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+
+        .btn-boss-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+            color: white;
+        }
+
+    /* Table Styles */
+    .table-boss {
+        margin-bottom: 0;
+        border-color: #f1f5f9;
+    }
+
+        .table-boss thead th {
+            background-color: #f8fafc;
+            color: #64748b;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 15px;
+        }
+
+        .table-boss tbody td {
+            padding: 15px;
+            vertical-align: middle;
+            color: #334155;
+            font-weight: 500;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .table-boss tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+    /* Avatar Circle */
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #e2e8f0;
+        color: #475569;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 10px;
+        text-transform: uppercase;
+    }
+
+    /* Badges */
+    .badge-role {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .badge-boss {
+        background-color: rgba(245, 158, 11, 0.15);
+        color: #d97706;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .badge-staff {
+        background-color: rgba(59, 130, 246, 0.1);
+        color: #2563eb;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    /* Action Buttons */
+    .btn-icon {
+        width: 35px;
+        height: 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+
+    .btn-edit {
+        background-color: #e0f2fe;
+        color: #0284c7;
+    }
+
+        .btn-edit:hover {
+            background-color: #0284c7;
+            color: white;
+        }
+
+    /* Custom Checkbox */
+    .custom-checkbox {
+        accent-color: #f59e0b;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="card card-boss">
+        <div class="card-header-boss">
+            <div>
+                <h5 class="m-0 fw-bold text-white text-uppercase">
+                    <i class="fas fa-users me-2 text-warning"></i> Danh sách nhân sự
+                </h5>
+                <small class="text-white-50">Quản lý toàn bộ nhân viên trong hệ thống</small>
+            </div>
+            <a href="@Url.Action("Create")" class="btn-boss-add">
+                <i class="fas fa-plus me-2"></i> Tuyển nhân viên
+            </a>
+        </div>
+
+        <div class="card-body p-0">
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-success m-3 border-0 shadow-sm"><i class="fas fa-check-circle me-2"></i>@TempData["Message"]</div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger m-3 border-0 shadow-sm"><i class="fas fa-exclamation-triangle me-2"></i>@TempData["Error"]</div>
+            }
+
+            @using (Html.BeginForm("DeleteMultiple", "NhanVien", FormMethod.Post, new { id = "formDelete" }))
+            {
+                <div class="table-responsive">
+                    <table class="table table-boss align-middle" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 50px;">
+                                    <input type="checkbox" id="checkAll" class="custom-checkbox" />
+                                </th>
+                                <th>Thông tin nhân viên</th>
+                                <th>Chức vụ</th>
+                                <th>Thông tin liên hệ</th>
+                                <th class="text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                // Lấy chữ cái đầu của tên để làm Avatar
+                                string firstLetter = !string.IsNullOrEmpty(item.TenNV) ? item.TenNV.Substring(0, 1) : "N";
+
+                                // Kiểm tra xem có phải Boss không để tô màu dòng
+                                bool isBoss = item.tblVaiTro.TenVaiTro.ToLower().Contains("chủ") || item.tblVaiTro.TenVaiTro.ToLower().Contains("admin");
+                                string rowClass = isBoss ? "bg-light" : "";
+
+                                <tr class="@rowClass">
+                                    <td class="text-center">
+                                        @if (Session["Admin"] != null && ((DoAn_LTW_NhaHang.tblNhanVien)Session["Admin"]).MaNV == item.MaNV)
+                                        {
+                                            <i class="fas fa-lock text-muted" title="Đang đăng nhập"></i>
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="selectedIds" value="@item.MaNV" class="checkItem custom-checkbox" />
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-circle @(isBoss ? "bg-warning text-dark" : "")">
+                                                @firstLetter
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark">@item.TenNV</div>
+                                                <small class="text-muted"><i class="fas fa-venus-mars me-1"></i> @item.GioiTinh • @item.NamSinh</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (isBoss)
+                                        {
+                                            <span class="badge badge-role badge-boss">
+                                                <i class="fas fa-crown me-1"></i> @item.tblVaiTro.TenVaiTro
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-role badge-staff">
+                                                <i class="fas fa-user-tag me-1"></i> @item.tblVaiTro.TenVaiTro
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <span class="text-dark"><i class="fas fa-envelope text-muted me-2"></i>@item.Email</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="@Url.Action("Edit","NhanVien", new { id = item.MaNV })" class="btn btn-icon btn-edit" title="Sửa hồ sơ">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-3 bg-light border-top d-flex justify-content-between align-items-center">
+                    <small class="text-muted">Đã chọn: <span id="countSelected" class="fw-bold">0</span> nhân viên</small>
+
+                    <button type="submit" id="btnDelete" class="btn btn-outline-danger btn-sm disabled" onclick="return confirm('Hành động này không thể hoàn tác! Bạn chắc chắn muốn xóa?');">
+                        <i class="fa fa-trash-alt me-2"></i> Xóa nhân sự đã chọn
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    // Logic Checkbox & Đếm số lượng
+    const checkAll = document.getElementById('checkAll');
+    const checkboxes = document.querySelectorAll('.checkItem');
+    const btnDelete = document.getElementById('btnDelete');
+    const countSpan = document.getElementById('countSelected');
+
+    function updateState() {
+        let count = 0;
+        checkboxes.forEach(cb => {
+            if (cb.checked) count++;
+        });
+
+        countSpan.textContent = count;
+
+        if (count > 0) {
+            btnDelete.classList.remove('disabled');
+        } else {
+            btnDelete.classList.add('disabled');
+        }
+    }
+
+    checkAll.addEventListener('change', function () {
+        checkboxes.forEach(cb => {
+            cb.checked = this.checked;
+        });
+        updateState();
+    });
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateState);
+    });
+</script>

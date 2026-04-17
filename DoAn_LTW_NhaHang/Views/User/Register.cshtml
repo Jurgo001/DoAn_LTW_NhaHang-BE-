@@ -1,0 +1,313 @@
+﻿@{
+    ViewBag.Title = "Đăng ký thành viên";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<style>
+    /* Ẩn thanh cuộn ngang của body */
+    body {
+        overflow-x: hidden;
+    }
+
+    .register-container {
+        min-height: 100vh;
+        background-color: #ffffff;
+    }
+
+    /* --- CỘT TRÁI: ẢNH --- */
+    .register-image-side {
+        /* Đổi ảnh khác với trang Login cho đỡ nhàm chán */
+        background-image: url('https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        min-height: 100vh;
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.8));
+    }
+
+    .register-welcome-text {
+        position: absolute;
+        bottom: 50px;
+        left: 50px;
+        color: white;
+        z-index: 2;
+        padding-right: 20px;
+    }
+
+    /* --- CỘT PHẢI: FORM --- */
+    .register-form-side {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        background-color: #fff;
+    }
+
+    .form-wrapper {
+        width: 100%;
+        max-width: 500px; /* Rộng hơn form login một chút vì nhiều trường hơn */
+    }
+
+    /* Style Input hiện đại (Floating Label) */
+    .form-floating > .form-control {
+        border: none;
+        border-bottom: 2px solid #eee;
+        border-radius: 0;
+        padding-left: 0;
+        box-shadow: none !important;
+        background: transparent;
+    }
+
+        .form-floating > .form-control:focus {
+            border-color: #ff6b6b;
+        }
+
+    .form-floating > label {
+        padding-left: 0;
+        color: #999;
+    }
+
+    /* Nút Đăng ký */
+    .btn-register-modern {
+        background: linear-gradient(to right, #ff6b6b, #ff9f43);
+        color: white;
+        border-radius: 50px;
+        padding: 12px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        border: none;
+    }
+
+        .btn-register-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
+            color: white;
+        }
+
+    .eye-icon {
+        position: absolute;
+        right: 10px;
+        top: 20px;
+        cursor: pointer;
+        color: #999;
+        z-index: 5;
+    }
+</style>
+
+<div class="row g-0 register-container">
+
+    <div class="col-lg-6 d-none d-lg-block register-image-side">
+        <div class="overlay"></div>
+        <div class="register-welcome-text">
+            <h1 class="display-4 fw-bold">Gia nhập đại gia đình</h1>
+            <p class="lead">Hàng ngàn ưu đãi hấp dẫn đang chờ đón bạn tại Nhà Hàng Ngon.</p>
+        </div>
+    </div>
+
+    <div class="col-lg-6 register-form-side">
+        <div class="form-wrapper">
+
+            <div class="mb-4">
+                <h2 class="fw-bold mb-2" style="color: #2d3436;">Tạo tài khoản mới</h2>
+                <p class="text-muted">Điền thông tin bên dưới để bắt đầu.</p>
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger border-0 bg-danger bg-opacity-10 text-danger rounded-3 fade show mb-4">
+                    <i class="fas fa-exclamation-triangle me-2"></i> @ViewBag.Error
+                </div>
+            }
+
+            @using (Html.BeginForm("RegisterUser", "User", FormMethod.Post))
+            {
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" name="TenKH" id="TenKH" placeholder="Họ và tên" required>
+                    <label for="TenKH">Họ và tên đầy đủ</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" name="Email" id="Email" placeholder="name@example.com" required>
+                    <label for="Email">Địa chỉ Email</label>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="number" class="form-control" name="DienThoai" id="DienThoai" placeholder="SĐT" required>
+                                <label for="DienThoai">Số điện thoại</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="SoNha" placeholder="Số nhà, tên đường">
+                                <label for="SoNha">Số nhà, tên đường</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <select class="form-select" id="Tinh" required>
+                                    <option value="" selected>Chọn Tỉnh/Thành</option>
+                                </select>
+                                <label for="Tinh">Tỉnh / Thành</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <select class="form-select" id="Huyen" required>
+                                    <option value="" selected>Chọn Quận/Huyện</option>
+                                </select>
+                                <label for="Huyen">Quận / Huyện</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <select class="form-select" id="Xa" required>
+                                    <option value="" selected>Chọn Phường/Xã</option>
+                                </select>
+                                <label for="Xa">Phường / Xã</label>
+                            </div>
+                        </div>
+                        <input type="hidden" name="DiaChi" id="DiaChiFull">
+                    </div>
+                </div>
+
+                <div class="form-floating mb-3 position-relative">
+                    <input type="password" class="form-control" name="MatKhau" id="MatKhau" placeholder="Mật khẩu" required>
+                    <label for="MatKhau">Mật khẩu</label>
+                    <i class="fas fa-eye eye-icon" onclick="togglePass('MatKhau', this)"></i>
+                </div>
+
+                <div class="form-floating mb-4 position-relative">
+                    <input type="password" class="form-control" name="MatKhauXacNhan" id="MatKhauXacNhan" placeholder="Nhập lại mật khẩu" required>
+                    <label for="MatKhauXacNhan">Xác nhận mật khẩu</label>
+                    <i class="fas fa-eye eye-icon" onclick="togglePass('MatKhauXacNhan', this)"></i>
+                </div>
+
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" required>
+                    <label class="form-check-label small text-secondary" for="flexCheckDefault">
+                        Tôi đồng ý với <a href="#" class="text-decoration-none fw-bold" style="color: #ff6b6b;">Điều khoản dịch vụ</a> và Chính sách bảo mật.
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-register-modern w-100 mb-4">
+                    HOÀN TẤT ĐĂNG KÝ
+                </button>
+
+                <div class="text-center">
+                    <span class="text-muted">Đã có tài khoản?</span>
+                    <a href="@Url.Action("Login", "User")" class="text-decoration-none fw-bold text-danger ms-1">Đăng nhập ngay</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePass(fieldId, btn) {
+        // Nếu btn là thẻ i (icon) thì dùng luôn, nếu không (trường hợp bọc ngoài) thì query
+        const icon = btn.tagName === 'I' ? btn : btn.querySelector('i');
+        const input = document.getElementById(fieldId);
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+            icon.style.color = "#ff6b6b";
+        } else {
+            input.type = "password";
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+            icon.style.color = "#999";
+        }
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // 1. Load danh sách Tỉnh/Thành khi trang vừa chạy
+        $.getJSON('https://esgoo.net/api-tinhthanh/1/0.htm', function (data_tinh) {
+            if (data_tinh.error == 0) {
+                $.each(data_tinh.data, function (key_tinh, val_tinh) {
+                    $("#Tinh").append('<option value="' + val_tinh.id + '" data-name="' + val_tinh.full_name + '">' + val_tinh.full_name + '</option>');
+                });
+            }
+        });
+
+        // 2. Khi chọn Tỉnh -> Load Quận/Huyện
+        $("#Tinh").change(function (e) {
+            var idtinh = $(this).val();
+            // Reset Huyện và Xã
+            $("#Huyen").html('<option value="0">Chọn Quận/Huyện</option>');
+            $("#Xa").html('<option value="0">Chọn Phường/Xã</option>');
+
+            if (idtinh != "") {
+                $.getJSON('https://esgoo.net/api-tinhthanh/2/' + idtinh + '.htm', function (data_quan) {
+                    if (data_quan.error == 0) {
+                        $.each(data_quan.data, function (key_quan, val_quan) {
+                            $("#Huyen").append('<option value="' + val_quan.id + '" data-name="' + val_quan.full_name + '">' + val_quan.full_name + '</option>');
+                        });
+                    }
+                });
+            }
+            capNhatDiaChi(); // Cập nhật text
+        });
+
+        // 3. Khi chọn Huyện -> Load Phường/Xã
+        $("#Huyen").change(function (e) {
+            var idquan = $(this).val();
+            $("#Xa").html('<option value="0">Chọn Phường/Xã</option>');
+
+            if (idquan != "") {
+                $.getJSON('https://esgoo.net/api-tinhthanh/3/' + idquan + '.htm', function (data_xa) {
+                    if (data_xa.error == 0) {
+                        $.each(data_xa.data, function (key_xa, val_xa) {
+                            $("#Xa").append('<option value="' + val_xa.id + '" data-name="' + val_xa.full_name + '">' + val_xa.full_name + '</option>');
+                        });
+                    }
+                });
+            }
+            capNhatDiaChi();
+        });
+
+        // 4. Khi chọn Xã hoặc nhập số nhà -> Cập nhật text đầy đủ
+        $("#Xa").change(function () { capNhatDiaChi(); });
+        $("#SoNha").on('input', function () { capNhatDiaChi(); });
+
+        // Hàm ghép chuỗi địa chỉ
+        function capNhatDiaChi() {
+            var soNha = $("#SoNha").val();
+            var tinh = $("#Tinh option:selected").data("name") || "";
+            var huyen = $("#Huyen option:selected").data("name") || "";
+            var xa = $("#Xa option:selected").data("name") || "";
+
+            // Chỉ ghép khi đã chọn đủ thông tin
+            var diaChiDayDu = "";
+            if (tinh != "" && huyen != "" && xa != "") {
+                diaChiDayDu = (soNha ? soNha + ", " : "") + xa + ", " + huyen + ", " + tinh;
+            }
+
+            // Gán vào input ẩn name="DiaChi"
+            $("#DiaChiFull").val(diaChiDayDu);
+
+            // Debug để xem (bạn có thể xóa dòng này)
+            console.log("Địa chỉ sẽ lưu: " + diaChiDayDu);
+        }
+    });
+</script>

@@ -1,0 +1,182 @@
+﻿@using DoAn_LTW_NhaHang.Models
+@model tblKhachHang
+@{
+    ViewBag.Title = "Hồ sơ cá nhân";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Ép kiểu danh sách Voucher từ ViewBag
+    var myVouchers = ViewBag.MyVouchers as List<tblLichSuDoiDiem>;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-3 mb-4">
+                <div class="card-header bg-white border-0 pt-4 pb-0">
+                    <h3 class="fw-bold text-center" style="color: #ff6b6b;">Hồ Sơ Của Tôi</h3>
+                </div>
+
+                <div class="card-body p-4">
+                    @if (TempData["Message"] != null)
+                    {
+                        <div class="alert alert-success text-center rounded-pill">@TempData["Message"]</div>
+                    }
+
+                    @using (Html.BeginForm("CapNhatHoSo", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.HiddenFor(m => m.MaKH)
+                        @Html.HiddenFor(m => m.MatKhau)
+                        @Html.HiddenFor(m => m.Avarta)
+
+                        <div class="text-center mb-4">
+                            <div class="position-relative d-inline-block">
+                                <img src="@(string.IsNullOrEmpty(Model.Avarta) ? "https://ui-avatars.com/api/?name=" + Model.TenKH + "&background=random" : Url.Content("~/Content/Images/" + Model.Avarta))"
+                                     class="rounded-circle shadow-sm"
+                                     width="120" height="120"
+                                     alt="Avatar"
+                                     style="object-fit: cover; border: 4px solid white;"
+                                     onerror="this.src='https://ui-avatars.com/api/?name=@Model.TenKH&background=random'">
+
+                                <label for="imageFile" class="position-absolute bottom-0 end-0 bg-light rounded-circle shadow-sm p-2"
+                                       style="cursor: pointer; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-camera text-primary"></i>
+                                </label>
+
+                                <input type="file" name="ImageUpload" id="imageFile" class="d-none" accept="image/*" onchange="previewAvatar(this)">
+                            </div>
+                            <p class="text-muted mt-2 mb-0 small">Nhấn vào icon máy ảnh để thay đổi</p>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    @Html.TextBoxFor(m => m.TenKH, new { @class = "form-control", required = "required", placeholder = "Họ tên" })
+                                    <label>Họ và tên</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    @Html.TextBoxFor(m => m.DienThoai, new { @class = "form-control", type = "number", required = "required", placeholder = "SĐT" })
+                                    <label>Số điện thoại</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", placeholder = "Email" })
+                                    <label>Email</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    @Html.TextAreaFor(m => m.DiaChi, new { @class = "form-control", style = "height: 80px", placeholder = "Địa chỉ" })
+                                    <label>Địa chỉ giao hàng</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 text-center">
+                            <button type="submit" class="btn text-white px-5 py-2 rounded-pill fw-bold shadow-sm"
+                                    style="background-color: #ff6b6b; transition: 0.3s;">
+                                <i class="fas fa-save me-2"></i> Lưu Thay Đổi
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="bg-white p-4 rounded-3 shadow-sm h-100 d-flex flex-column justify-content-center align-items-center position-relative overflow-hidden">
+                        <div style="position: absolute; right: -10px; top: -10px; font-size: 5rem; color: #f8f9fa; z-index: 0;">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <h5 class="text-muted mb-0 z-1">Đơn hàng đã đặt</h5>
+                        <h2 class="fw-bold text-primary my-2 z-1">@ViewBag.SoDonHang</h2>
+                        <a href="@Url.Action("LichSuDonHang", "User")" class="btn btn-outline-primary btn-sm rounded-pill px-3 z-1">
+                            Xem lịch sử
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="bg-white p-4 rounded-3 shadow-sm h-100 d-flex flex-column justify-content-center align-items-center position-relative overflow-hidden"
+                         style="border-bottom: 4px solid #ffc107;">
+                        <div style="position: absolute; right: -10px; top: -10px; font-size: 5rem; color: #fff9db; z-index: 0;">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <h5 class="text-muted mb-0 z-1">Điểm tích lũy</h5>
+                        <h2 class="fw-bold text-warning my-2 z-1">@ViewBag.DiemTichLuy</h2>
+
+                        <a href="@Url.Action("DoiDiemVoucher", "User")" class="btn btn-warning text-dark fw-bold btn-sm rounded-pill px-4 z-1 shadow-sm">
+                            <i class="fas fa-gift me-1"></i> Đổi Voucher Ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-3 mt-4">
+                <div class="card-header bg-white border-bottom pt-4 pb-2">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-ticket-alt me-2" style="color: #20c997;"></i> Ví Voucher Của Tôi</h5>
+                </div>
+                <div class="card-body bg-light">
+                    @if (myVouchers != null && myVouchers.Count > 0)
+                    {
+                        <div class="row g-3">
+                            @foreach (var item in myVouchers)
+                            {
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-left: 5px solid @(item.TrangThai == true ? "#6c757d" : "#20c997") !important;">
+                                        <div class="card-body d-flex align-items-center p-3">
+                                            <div class="flex-shrink-0 text-center me-3">
+                                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                                     style="width: 50px; height: 50px; background-color: @(item.TrangThai == true ? "#e9ecef" : "#d1e7dd"); color: @(item.TrangThai == true ? "#6c757d" : "#0f5132");">
+                                                    <i class="fas fa-percent fa-lg"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h6 class="fw-bold mb-1">@item.tblVoucher.TenVoucher</h6>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <code class="text-dark bg-light px-2 py-1 rounded border">@item.MaCode</code>
+                                                    @if (item.TrangThai == true)
+                                                    {
+                                                        <span class="badge bg-secondary rounded-pill">Đã dùng</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-success rounded-pill">Sẵn sàng</span>
+                                                    }
+                                                </div>
+                                                <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">
+                                                    Ngày đổi: @string.Format("{0:dd/MM/yyyy}", item.NgayDoi)
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-ghost fa-2x mb-2"></i>
+                            <p>Bạn chưa có voucher nào. Hãy tích điểm và đổi quà nhé!</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    function previewAvatar(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('previewImg').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>

@@ -1,0 +1,581 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FBA33102-BF3A-47E5-B39F-8DD4406F1EA8}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DoAn_LTW_NhaHang</RootNamespace>
+    <AssemblyName>DoAn_LTW_NhaHang</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort>44324</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.2.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.9\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.9\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\CartController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MoblieApiController.cs" />
+    <Compile Include="Controllers\NhanVienController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Cart.cs" />
+    <Compile Include="Models\CartItem.cs" />
+    <Compile Include="Models\ThongKeViewModel.cs" />
+    <Compile Include="NhaHang.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>NhaHang.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="NhaHang.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
+    <Compile Include="NhaHang.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>NhaHang.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="tblChiTietHoaDon.cs">
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tblDatBan.cs">
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tblHinhAnh.cs">
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tblHoaDon.cs">
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tblKhachHang.cs">
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tblLichSuDoiDiem.cs">
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tblLienHe.cs">
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tblLoaiMon.cs">
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tblMonAn.cs">
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tblNCC.cs">
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tblNhanVien.cs">
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tblTinhTrang.cs">
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tblVaiTro.cs">
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tblVoucher.cs">
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap-grid.css" />
+    <Content Include="Content\bootstrap-grid.min.css" />
+    <Content Include="Content\bootstrap-grid.rtl.css" />
+    <Content Include="Content\bootstrap-grid.rtl.min.css" />
+    <Content Include="Content\bootstrap-reboot.css" />
+    <Content Include="Content\bootstrap-reboot.min.css" />
+    <Content Include="Content\bootstrap-reboot.rtl.css" />
+    <Content Include="Content\bootstrap-reboot.rtl.min.css" />
+    <Content Include="Content\bootstrap-utilities.css" />
+    <Content Include="Content\bootstrap-utilities.min.css" />
+    <Content Include="Content\bootstrap-utilities.rtl.css" />
+    <Content Include="Content\bootstrap-utilities.rtl.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\bootstrap.rtl.css" />
+    <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\Images\bachi_nuong.jpg" />
+    <Content Include="Content\Images\banhflan.jpg" />
+    <Content Include="Content\Images\bmt.jpg" />
+    <Content Include="Content\Images\boluclac.jpg" />
+    <Content Include="Content\Images\bo_tieu.jpg" />
+    <Content Include="Content\Images\bunbo.jpg" />
+    <Content Include="Content\Images\bunbo_chay.jpg" />
+    <Content Include="Content\Images\bunrieu.jpg" />
+    <Content Include="Content\Images\bun_thitnuong.jpg" />
+    <Content Include="Content\Images\camvat.jpg" />
+    <Content Include="Content\Images\canhga_nuong.jpg" />
+    <Content Include="Content\Images\caphe_sua.jpg" />
+    <Content Include="Content\Images\ca_hoi.jpg" />
+    <Content Include="Content\Images\ca_loc.jpg" />
+    <Content Include="Content\Images\cha_gio_hs.jpg" />
+    <Content Include="Content\Images\cha_goi_hs.jpg" />
+    <Content Include="Content\Images\comchien.jpg" />
+    <Content Include="Content\Images\comga.jpg" />
+    <Content Include="Content\Images\comtam.jpg" />
+    <Content Include="Content\Images\com_duongchau.jpg" />
+    <Content Include="Content\Images\com_suon.jpg" />
+    <Content Include="Content\Images\dahu_kho.jpg" />
+    <Content Include="Content\Images\dauhu.jpg" />
+    <Content Include="Content\Images\dauhu_kho.jpg" />
+    <Content Include="Content\Images\ech_xao.jpg" />
+    <Content Include="Content\Images\flan.jpg" />
+    <Content Include="Content\Images\ga_mat_ong.jpg" />
+    <Content Include="Content\Images\ga_nuong_mat.jpg" />
+    <Content Include="Content\Images\ga_nuong_muoi.jpg" />
+    <Content Include="Content\Images\goicuon.jpg" />
+    <Content Include="Content\Images\hau_nuong.jpg" />
+    <Content Include="Content\Images\heo_quay.jpg" />
+    <Content Include="Content\Images\hutieu.jpg" />
+    <Content Include="Content\Images\kemdua.jpg" />
+    <Content Include="Content\Images\kem_socola.jpg" />
+    <Content Include="Content\Images\khoaitay.jpg" />
+    <Content Include="Content\Images\kho_to.jpg" />
+    <Content Include="Content\Images\laubop.jpg" />
+    <Content Include="Content\Images\lauga.jpg" />
+    <Content Include="Content\Images\laumam.jpg" />
+    <Content Include="Content\Images\launam.jpg" />
+    <Content Include="Content\Images\lautc.jpg" />
+    <Content Include="Content\Images\lauthai.jpg" />
+    <Content Include="Content\Images\lautom.jpg" />
+    <Content Include="Content\Images\mixaohs.jpg" />
+    <Content Include="Content\Images\mi_quang.jpg" />
+    <Content Include="Content\Images\muc_nuong.jpg" />
+    <Content Include="Content\Images\muc_xao.jpg" />
+    <Content Include="Content\Images\ngo_sen.jpg" />
+    <Content Include="Content\Images\pho_bo.jpg" />
+    <Content Include="Content\Images\pho_ga.jpg" />
+    <Content Include="Content\Images\raucau.jpg" />
+    <Content Include="Content\Images\rau_xao.jpg" />
+    <Content Include="Content\Images\salad.jpg" />
+    <Content Include="Content\Images\sinhtobo.jpg" />
+    <Content Include="Content\Images\suachua.jpg" />
+    <Content Include="Content\Images\sup_hs.jpg" />
+    <Content Include="Content\Images\tomrangme.jpg" />
+    <Content Include="Content\Images\tom_nuong.jpg" />
+    <Content Include="Content\Images\trasua.jpg" />
+    <Content Include="Content\Images\tra_dao.jpg" />
+    <Content Include="Content\Images\vit_quay.jpg" />
+    <Content Include="favicon.ico" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="NhaHang.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>NhaHang.edmx</DependentUpon>
+      <LastGenOutput>NhaHang.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="NhaHang.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>NhaHang.edmx</DependentUpon>
+      <LastGenOutput>NhaHang.cs</LastGenOutput>
+    </Content>
+    <Content Include="Scripts\bootstrap.bundle.js" />
+    <Content Include="Scripts\bootstrap.bundle.min.js" />
+    <Content Include="Scripts\bootstrap.esm.js" />
+    <Content Include="Scripts\bootstrap.esm.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <EntityDeploy Include="NhaHang.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>NhaHang.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="NhaHang.edmx.diagram">
+      <DependentUpon>NhaHang.edmx</DependentUpon>
+    </Content>
+    <Content Include="Content\Images\Thumbs.db" />
+    <None Include="Scripts\jquery-3.7.0.intellisense.js" />
+    <Content Include="Scripts\jquery-3.7.0.js" />
+    <Content Include="Scripts\jquery-3.7.0.min.js" />
+    <Content Include="Scripts\jquery-3.7.0.slim.js" />
+    <Content Include="Scripts\jquery-3.7.0.slim.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="TrangChu\css\bootstrap.min.css" />
+    <Content Include="TrangChu\css\style.css" />
+    <Content Include="TrangChu\img\about-1.jpg" />
+    <Content Include="TrangChu\img\about-2.jpg" />
+    <Content Include="TrangChu\img\about-3.jpg" />
+    <Content Include="TrangChu\img\about-4.jpg" />
+    <Content Include="TrangChu\img\bg-hero.jpg" />
+    <Content Include="TrangChu\img\hero.png" />
+    <Content Include="TrangChu\img\menu-1.jpg" />
+    <Content Include="TrangChu\img\menu-2.jpg" />
+    <Content Include="TrangChu\img\menu-3.jpg" />
+    <Content Include="TrangChu\img\menu-4.jpg" />
+    <Content Include="TrangChu\img\menu-5.jpg" />
+    <Content Include="TrangChu\img\menu-6.jpg" />
+    <Content Include="TrangChu\img\menu-7.jpg" />
+    <Content Include="TrangChu\img\menu-8.jpg" />
+    <Content Include="TrangChu\img\team-1.jpg" />
+    <Content Include="TrangChu\img\team-2.jpg" />
+    <Content Include="TrangChu\img\team-3.jpg" />
+    <Content Include="TrangChu\img\team-4.jpg" />
+    <Content Include="TrangChu\img\testimonial-1.jpg" />
+    <Content Include="TrangChu\img\testimonial-2.jpg" />
+    <Content Include="TrangChu\img\testimonial-3.jpg" />
+    <Content Include="TrangChu\img\testimonial-4.jpg" />
+    <Content Include="TrangChu\img\video.jpg" />
+    <Content Include="TrangChu\js\main.js" />
+    <Content Include="TrangChu\lib\animate\animate.css" />
+    <Content Include="TrangChu\lib\animate\animate.min.css" />
+    <Content Include="TrangChu\lib\counterup\counterup.min.js" />
+    <Content Include="TrangChu\lib\easing\easing.js" />
+    <Content Include="TrangChu\lib\easing\easing.min.js" />
+    <Content Include="TrangChu\lib\owlcarousel\assets\ajax-loader.gif" />
+    <Content Include="TrangChu\lib\owlcarousel\assets\owl.carousel.css" />
+    <Content Include="TrangChu\lib\owlcarousel\assets\owl.carousel.min.css" />
+    <Content Include="TrangChu\lib\owlcarousel\assets\owl.theme.default.css" />
+    <Content Include="TrangChu\lib\owlcarousel\assets\owl.theme.default.min.css" />
+    <Content Include="TrangChu\lib\owlcarousel\assets\owl.theme.green.css" />
+    <Content Include="TrangChu\lib\owlcarousel\assets\owl.theme.green.min.css" />
+    <Content Include="TrangChu\lib\owlcarousel\assets\owl.video.play.png" />
+    <Content Include="TrangChu\lib\owlcarousel\owl.carousel.js" />
+    <Content Include="TrangChu\lib\owlcarousel\owl.carousel.min.js" />
+    <Content Include="TrangChu\lib\tempusdominus\css\tempusdominus-bootstrap-4.css" />
+    <Content Include="TrangChu\lib\tempusdominus\css\tempusdominus-bootstrap-4.min.css" />
+    <Content Include="TrangChu\lib\tempusdominus\js\moment-timezone.min.js" />
+    <Content Include="TrangChu\lib\tempusdominus\js\moment.min.js" />
+    <Content Include="TrangChu\lib\tempusdominus\js\tempusdominus-bootstrap-4.js" />
+    <Content Include="TrangChu\lib\tempusdominus\js\tempusdominus-bootstrap-4.min.js" />
+    <Content Include="TrangChu\lib\waypoints\waypoints.min.js" />
+    <Content Include="TrangChu\lib\wow\wow.js" />
+    <Content Include="TrangChu\lib\wow\wow.min.js" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\_LoaiMon.cshtml" />
+    <Content Include="Views\Home\Detail.cshtml" />
+    <Content Include="Views\User\Login.cshtml" />
+    <Content Include="Views\Cart\Index.cshtml" />
+    <Content Include="Views\Home\TrangChu.cshtml" />
+    <Content Include="TrangChu\lib\owlcarousel\LICENSE" />
+    <Content Include="TrangChu\lib\waypoints\links.php" />
+    <Content Include="TrangChu\scss\bootstrap.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\bootstrap-grid.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\bootstrap-reboot.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\bootstrap-utilities.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\bootstrap.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\forms\_floating-labels.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\forms\_form-check.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\forms\_form-control.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\forms\_form-range.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\forms\_form-select.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\forms\_form-text.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\forms\_input-group.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\forms\_labels.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\forms\_validation.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\helpers\_clearfix.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\helpers\_colored-links.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\helpers\_position.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\helpers\_ratio.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\helpers\_stretched-link.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\helpers\_text-truncation.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\helpers\_visually-hidden.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_alert.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_border-radius.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_box-shadow.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_breakpoints.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_buttons.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_caret.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_clearfix.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_color-scheme.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_container.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_deprecate.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_forms.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_gradients.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_grid.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_image.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_list-group.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_lists.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_pagination.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_reset-text.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_resize.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_table-variants.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_text-truncate.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_transition.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_utilities.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\mixins\_visually-hidden.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\utilities\_api.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\vendor\_rfs.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_accordion.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_alert.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_badge.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_breadcrumb.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_button-group.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_buttons.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_card.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_carousel.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_close.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_containers.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_dropdown.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_forms.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_functions.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_grid.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_helpers.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_images.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_list-group.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_mixins.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_modal.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_nav.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_navbar.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_offcanvas.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_pagination.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_popover.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_progress.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_reboot.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_root.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_spinners.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_tables.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_toasts.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_tooltip.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_transitions.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_type.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_utilities.scss" />
+    <Content Include="TrangChu\scss\bootstrap\scss\_variables.scss" />
+    <Content Include="Views\User\Register.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Admin\Create.cshtml" />
+    <Content Include="Views\Admin\Edit.cshtml" />
+    <Content Include="Views\Cart\PayMent.cshtml" />
+    <Content Include="Views\User\LichSuDonHang.cshtml" />
+    <Content Include="Views\User\ChiTietDonHang.cshtml" />
+    <Content Include="Views\Admin\QuanLyLoai.cshtml" />
+    <Content Include="Views\Admin\QuanLyDonHang.cshtml" />
+    <Content Include="Views\Admin\DuyetDonHang.cshtml" />
+    <Content Include="Views\Admin\ThongKe.cshtml" />
+    <Content Include="Views\User\HoSoCaNhan.cshtml" />
+    <Content Include="Views\User\QuenMatKhau.cshtml" />
+    <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
+    <Content Include="Views\NhanVien\Index.cshtml" />
+    <Content Include="Views\NhanVien\Create.cshtml" />
+    <Content Include="Views\Shared\_LayoutBoss.cshtml" />
+    <Content Include="Views\User\DoiDiemVoucher.cshtml" />
+    <Content Include="Views\Shared\_LayoutLogin.cshtml" />
+    <Content Include="Views\Home\LienHe.cshtml" />
+    <Content Include="Views\Shared\_LayoutLienHe.cshtml" />
+    <Content Include="Views\Admin\SuaLoai.cshtml" />
+    <Content Include="Views\NhanVien\ThemVoucher.cshtml" />
+    <Content Include="Views\NhanVien\QuanLyVoucher.cshtml" />
+    <Content Include="Views\NhanVien\SuaVoucher.cshtml" />
+    <Content Include="Views\NhanVien\Edit.cshtml" />
+    <Content Include="Views\NhanVien\QuanLyKhachHang.cshtml" />
+    <Content Include="Views\NhanVien\ThemKhachHang.cshtml" />
+    <Content Include="Views\NhanVien\SuaKhachHang.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Views\MoblieApi\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap.rtl.min.css.map" />
+    <Content Include="Content\bootstrap.rtl.css.map" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-utilities.rtl.min.css.map" />
+    <Content Include="Content\bootstrap-utilities.rtl.css.map" />
+    <Content Include="Content\bootstrap-utilities.min.css.map" />
+    <Content Include="Content\bootstrap-utilities.css.map" />
+    <Content Include="Content\bootstrap-reboot.rtl.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.rtl.css.map" />
+    <Content Include="Content\bootstrap-reboot.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.css.map" />
+    <Content Include="Content\bootstrap-grid.rtl.min.css.map" />
+    <Content Include="Content\bootstrap-grid.rtl.css.map" />
+    <Content Include="Content\bootstrap-grid.min.css.map" />
+    <Content Include="Content\bootstrap-grid.css.map" />
+    <None Include="packages.config" />
+    <Content Include="Scripts\bootstrap.min.js.map" />
+    <Content Include="Scripts\bootstrap.js.map" />
+    <Content Include="Scripts\bootstrap.esm.min.js.map" />
+    <Content Include="Scripts\bootstrap.esm.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.min.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.js.map" />
+    <Content Include="Scripts\jquery-3.7.0.slim.min.map" />
+    <Content Include="Scripts\jquery-3.7.0.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>61077</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>https://localhost:44324/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

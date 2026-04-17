@@ -1,0 +1,204 @@
+﻿@using DoAn_LTW_NhaHang.Models
+@model tblHoaDon
+@{
+    ViewBag.Title = "Chi tiết đơn hàng #" + Model.MaHD;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // 1. Định nghĩa hằng số (ĐÃ SỬA: Thay 10 phút bằng 5 phút)
+    const int THOI_GIAN_HUY_TOI_DA_PHUT = 5;
+
+    // Khởi tạo giá trị mặc định cho Milliseconds
+    long thoiDiemHetHanMs = 0;
+    long thoiDiemHienTaiMs = 0;
+
+    // KHAI BÁO VÀ GÁN GIÁ TRỊ TẠI ĐÂY
+    // 2. Logic điều kiện hiển thị nút hủy (Chỉ hủy được nếu TinhTrang == 1 và Model.NgayLap có giá trị)
+    bool duocPhepHuyTheoTrangThai = (Model.TinhTrang == 1 && Model.NgayLap.HasValue);
+
+
+    // 3. Chỉ tính toán thời gian nếu Model.NgayLap có giá trị
+    if (Model.NgayLap.HasValue)
+    {
+        // 4. Thiết lập mốc thời gian Unix Epoch (1970-01-01)
+        var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        // 5. Tính toán thời điểm hết hạn hủy (Sử dụng hằng số 5 phút)
+        DateTime thoiDiemHetHan = Model.NgayLap.Value.AddMinutes(THOI_GIAN_HUY_TOI_DA_PHUT);
+
+        // 6. Tính MILLISECONDS HẾT HẠN kể từ Unix Epoch
+        thoiDiemHetHanMs = (long)(thoiDiemHetHan.ToUniversalTime() - unixEpoch).TotalMilliseconds;
+
+        // 7. Tính MILLISECONDS HIỆN TẠI của Server
+        thoiDiemHienTaiMs = (long)(DateTime.UtcNow - unixEpoch).TotalMilliseconds;
+
+        // Bổ sung kiểm tra server-side: Nếu đã quá 5 phút ngay từ khi render View, ẩn nút luôn.
+        if (thoiDiemHienTaiMs >= thoiDiemHetHanMs)
+        {
+            duocPhepHuyTheoTrangThai = false;
+        }
+    }
+}
+
+<div class="container py-5">
+    <a href="@Url.Action("LichSuDonHang", "User")" class="text-decoration-none text-secondary mb-3 d-inline-block">
+        <i class="fas fa-arrow-left me-2"></i> Quay lại danh sách
+    </a>
+
+    <div class="card shadow border-0 overflow-hidden">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center p-3">
+            <span class="fw-bold fs-5">Đơn hàng #@Model.MaHD</span>
+            <span class="badge bg-white text-primary">@string.Format("{0:dd/MM/yyyy HH:mm}", Model.NgayLap)</span>
+        </div>
+
+        <div class="card-body p-4">
+            @* Thông tin Người nhận và Thanh toán *@
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h6 class="text-muted text-uppercase small fw-bold">Người nhận</h6>
+                    <p class="fw-bold mb-1">@Model.tblKhachHang.TenKH</p>
+                    <p class="text-muted small mb-1"><i class="fas fa-phone me-2"></i>@Model.tblKhachHang.DienThoai</p>
+                    <p class="text-muted small"><i class="fas fa-map-marker-alt me-2"></i>@Model.tblKhachHang.DiaChi</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h6 class="text-muted text-uppercase small fw-bold">Thanh toán</h6>
+                    <p class="fw-bold text-danger fs-4 mb-0">@string.Format("{0:N0}", Model.TongTien) đ</p>
+
+                    @* --- BẮT ĐẦU SỬA ĐỔI --- *@
+                    @* Giả sử bảng tblHoaDon của bạn có cột 'DaThanhToan' (kiểu bool/bit) hoặc cột 'MaPT' (Phương thức thanh toán) *@
+
+                    @if (Model.DaThanhToan == true)
+                    {
+                        @* Trường hợp 1: Đã thanh toán Online (Momo/VNPAY/Chuyển khoản) *@
+                        <div class="text-success fw-bold">
+                            <i class="fas fa-check-double me-1"></i> Đã thanh toán - Chờ nhận hàng
+                        </div>
+                    }
+                    else
+                    {
+                        @* Trường hợp 2: Chưa thanh toán (COD) *@
+                        <div class="text-primary fw-bold">
+                            <i class="fas fa-hand-holding-usd me-1"></i> Thanh toán khi nhận hàng (COD)
+                        </div>
+                    }
+                    @* --- KẾT THÚC SỬA ĐỔI --- *@
+                </div>
+            </div>
+
+            <hr class="bg-secondary opacity-25">
+
+            <h5 class="fw-bold mt-4 mb-3">Trạng thái đơn hàng</h5>
+            @{
+                string trangThai = "";
+                string badgeClass = "";
+                switch (Model.TinhTrang)
+                {
+                    case 1: trangThai = "Chờ xác nhận"; badgeClass = "bg-warning text-dark"; break;
+                    case 2: trangThai = "Đang chế biến"; badgeClass = "bg-info"; break;
+                    case 3: trangThai = "Đang giao hàng"; badgeClass = "bg-primary"; break;
+                    case 4: trangThai = "Đã hoàn tất"; badgeClass = "bg-success"; break;
+                    default: trangThai = "Lỗi trạng thái"; badgeClass = "bg-danger"; break;
+                }
+            }
+            <p class="fs-4"><span class="badge @badgeClass">@trangThai</span></p>
+
+            <hr class="bg-secondary opacity-25">
+
+            <h5 class="fw-bold mt-4 mb-3">Danh sách món ăn</h5>
+            <div class="table-responsive">
+                <table class="table table-borderless align-middle">
+                    <thead class="text-secondary small border-bottom">
+                        <tr>
+                            <th>Món ăn</th>
+                            <th class="text-center">Đơn giá</th>
+                            <th class="text-center">Số lượng</th>
+                            <th class="text-end">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.tblChiTietHoaDons)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="@Url.Content("~/Content/Images/" + item.tblMonAn.AnhDaiDien)"
+                                             class="rounded-3 me-3" width="60" height="60" style="object-fit: cover;">
+                                        <div>
+                                            <span class="fw-bold d-block">@item.tblMonAn.TenMon</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">@string.Format("{0:N0}", item.DonGia)</td>
+                                <td class="text-center fw-bold">x @item.SoLuong</td>
+                                <td class="text-end fw-bold">@string.Format("{0:N0}", item.DonGia * item.SoLuong)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* --- PHẦN FOOTER VÀ NÚT HỦY ĐƠN HÀNG --- *@
+        <div class="card-footer bg-light p-3 text-end d-flex justify-content-end align-items-center">
+
+            @* Hiển thị thời gian còn lại để Hủy *@
+            @if (duocPhepHuyTheoTrangThai)
+            {
+                <span id="timerHuyDon" class="text-danger fw-bold me-3 small"></span>
+            }
+
+            @* Nút Hủy Đơn Hàng (Chỉ hiển thị nếu trạng thái cho phép) *@
+            @if (duocPhepHuyTheoTrangThai)
+            {
+                <a href="@Url.Action("HuyDonHang", "User", new { id = Model.MaHD })"
+                   id="btnHuyDon"
+                   class="btn btn-outline-danger btn-sm"
+                   onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng #@Model.MaHD không? Hành động này không thể hoàn tác.');">
+                    Hủy đơn hàng
+                </a>
+            }
+
+            <a href="@Url.Action("TrangChu", "Home")" class="btn btn-primary btn-sm ms-2">Mua lại</a>
+        </div>
+        @* --- END PHẦN FOOTER --- *@
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        // Chỉ chạy script này nếu nút hủy đơn được phép hiển thị (trạng thái = 1)
+        if (@(duocPhepHuyTheoTrangThai.ToString().ToLower())) {
+
+            // 1. Nhận giá trị Milliseconds đã được tính toán ở C# (an toàn)
+            var expiryTimeMs = @thoiDiemHetHanMs;
+            var serverTimeNowMs = @thoiDiemHienTaiMs;
+
+            // 2. Tính độ lệch thời gian Client so với Server để đồng bộ hóa Timer
+            var clientOffsetMs = new Date().getTime() - serverTimeNowMs;
+
+            var timerInterval = setInterval(function() {
+
+                var currentTimeMs = new Date().getTime();
+                var remainingTimeMs = expiryTimeMs - currentTimeMs;
+
+                // Kiểm tra nếu thời gian còn lại lớn hơn 0
+                if (remainingTimeMs > 0) {
+                    var totalSeconds = Math.floor(remainingTimeMs / 1000);
+                    var seconds = totalSeconds % 60;
+                    var minutes = Math.floor(totalSeconds / 60);
+
+                    // Định dạng hiển thị MM:SS
+                    var timeDisplay = "Hủy trước: " + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0');
+
+                    $('#timerHuyDon').text(timeDisplay);
+                } else {
+                    // Hết giờ hủy
+                    clearInterval(timerInterval);
+                    $('#timerHuyDon').text('Đã hết hạn hủy (5 phút)');
+
+                    // ẨN NÚT HỦY ĐƠN HÀNG
+                    $('#btnHuyDon').hide();
+                }
+            }, 1000);
+        }
+    </script>
+}

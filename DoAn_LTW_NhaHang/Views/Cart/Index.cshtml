@@ -1,0 +1,399 @@
+﻿@using DoAn_LTW_NhaHang.Models
+@model Cart
+
+@{
+    ViewBag.Title = "Giỏ hàng của bạn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Lấy giá trị giảm giá hiện tại (nếu đã áp dụng trước đó)
+    decimal giamGia = 0;
+    if (Session["GiamGia"] != null)
+    {
+        giamGia = (decimal)Session["GiamGia"];
+    }
+
+    decimal tamTinh = Model.TongThanhTien();
+    decimal tongCong = tamTinh - giamGia;
+    if (tongCong < 0) { tongCong = 0; }
+}
+
+<style>
+    /* CSS Nâng cấp UI */
+    .cart-container {
+        background-color: #f8f9fa;
+        min-height: 80vh;
+    }
+
+    /* Ảnh sản phẩm */
+    .cart-item-img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 12px;
+        border: 1px solid #eee;
+    }
+
+    /* Nút số lượng */
+    .qty-btn {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        transition: 0.2s;
+        background: #f1f2f6;
+    }
+
+        .qty-btn:hover {
+            background-color: #dfe4ea;
+            color: #000;
+        }
+
+    /* Nút xóa */
+    .delete-btn {
+        color: #b2bec3;
+        transition: 0.3s;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .delete-btn:hover {
+            color: #ff4757;
+            background-color: #ffeaa7;
+        }
+
+    /* Voucher Input */
+    .voucher-input-group {
+        position: relative;
+    }
+
+        .voucher-input-group input {
+            padding-right: 90px;
+            border-radius: 10px;
+            border: 1px solid #dfe6e9;
+        }
+
+            .voucher-input-group input:focus {
+                box-shadow: none;
+                border-color: #0d6efd;
+            }
+
+    .btn-apply {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        bottom: 5px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: bold;
+        background: #2d3436;
+        color: white;
+        border: none;
+        padding: 0 15px;
+    }
+
+        .btn-apply:hover {
+            background: #000;
+        }
+
+        .btn-apply:disabled {
+            background: #b2bec3;
+            cursor: not-allowed;
+        }
+
+    /* Payment Options */
+    .payment-option {
+        cursor: pointer;
+        border: 1px solid #dfe6e9;
+        transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .payment-option:hover {
+            border-color: #0d6efd;
+            background-color: #f8f9fa;
+        }
+
+    .form-check-input:checked + .form-check-label .payment-option {
+        border-color: #0d6efd;
+        background-color: #e7f1ff;
+        box-shadow: 0 0 0 1px #0d6efd inset;
+    }
+
+    .check-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 1.2rem;
+    }
+
+    /* Sticky Sidebar */
+    .summary-card {
+        position: sticky;
+        top: 90px;
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+</style>
+
+<div class="container py-5 cart-container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Trang chủ</a></li>
+            <li class="breadcrumb-item active fw-bold text-dark" aria-current="page">Giỏ hàng</li>
+        </ol>
+    </nav>
+
+    @if (Model == null || Model.list.Count == 0)
+    {
+        <div class="text-center py-5 bg-white rounded-3 shadow-sm">
+            <img src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png" width="150" alt="Empty Cart" class="mb-3 opacity-75">
+            <h3 class="fw-bold text-secondary">Giỏ hàng trống trơn!</h3>
+            <p class="text-muted">Hãy thêm vài món ngon vào đây nhé.</p>
+            <a href="@Url.Action("Index", "Home")" class="btn btn-warning rounded-pill px-5 fw-bold text-white mt-3 shadow-sm">
+                <i class="fas fa-utensils me-2"></i>Xem Thực Đơn
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold m-0">Giỏ hàng <span class="text-muted fs-6">(@Model.list.Count món)</span></h4>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light text-secondary small text-uppercase">
+                                    <tr>
+                                        <th scope="col" class="py-3 ps-4">Món ăn</th>
+                                        <th scope="col" class="text-center py-3">Đơn giá</th>
+                                        <th scope="col" class="text-center py-3">Số lượng</th>
+                                        <th scope="col" class="text-end py-3 pe-4">Thành tiền</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.list)
+                                    {
+                                        <tr>
+                                            <td class="ps-4">
+                                                <div class="d-flex align-items-center">
+                                                    <img src="@Url.Content("~/Content/Images/"+item.AnhDaiDien)" class="cart-item-img me-3" onerror="this.src='https://via.placeholder.com/80';">
+                                                    <div>
+                                                        <h6 class="fw-bold mb-1 text-dark">@item.TenSP</h6>
+                                                        <span class="badge bg-light text-secondary border">Size Lớn</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center fw-bold text-muted">@item.DonGia.ToString("N0")</td>
+                                            <td>
+                                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                                    <a href="@Url.Action("UpDateSL","Cart", new { id = item.MaSP, Type = 1 })" class="qty-btn text-dark text-decoration-none"><i class="fas fa-minus small"></i></a>
+                                                    <span class="fw-bold" style="min-width: 20px; text-align: center;">@item.SoLuong</span>
+                                                    <a href="@Url.Action("UpDateSL","Cart", new { id = item.MaSP, Type = 0 })" class="qty-btn text-success text-decoration-none"><i class="fas fa-plus small"></i></a>
+                                                </div>
+                                            </td>
+                                            <td class="text-end fw-bold text-dark pe-4">@item.ThanhTien.ToString("N0")</td>
+                                            <td class="text-center">
+                                                <a href="@Url.Action("ReMove","Cart", new { id = item.MaSP })" class="btn delete-btn rounded-circle" onclick="return confirm('Bạn muốn xóa món này khỏi giỏ?');">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a href="@Url.Action("Index","Home")" class="text-decoration-none fw-bold text-secondary hover-primary">
+                        <i class="fas fa-long-arrow-alt-left me-2"></i>Tiếp tục chọn món
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="summary-card bg-white p-4">
+                    <form action="@Url.Action("DatHang", "Cart")" method="post">
+
+                        <h5 class="fw-bold mb-4">Thông tin thanh toán</h5>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Mã ưu đãi</label>
+                            <div class="voucher-input-group">
+                                <i class="fas fa-ticket-alt position-absolute text-muted" style="left: 15px; top: 12px;"></i>
+                                <input type="text" id="voucherCode" class="form-control ps-5" placeholder="Nhập mã Voucher..."
+                                       value="@(Session["VoucherCode"] != null ? Session["VoucherCode"].ToString() : "")"
+                                       @(Session["VoucherCode"] != null ? "disabled" : "")>
+                                <button type="button" id="btnApplyVoucher" class="btn-apply" @(Session["VoucherCode"] != null ? "disabled" : "")>
+                                    @(Session["VoucherCode"] != null ? "Đã dùng" : "Áp dụng")
+                                </button>
+                            </div>
+                            <div id="voucherMessage" class="mt-2 small">
+                                @if (Session["VoucherCode"] != null)
+                                {
+                                    <span class="text-success fw-bold"><i class="fas fa-check-circle"></i> Đã áp dụng mã: @Session["VoucherCode"]</span>
+                                }
+                            </div>
+                        </div>
+
+                        <hr class="text-muted opacity-25">
+
+                        <div class="d-flex justify-content-between mb-2 text-secondary">
+                            <span>Tạm tính:</span>
+                            <span class="fw-bold text-dark">@tamTinh.ToString("N0") đ</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2 text-success">
+                            <span>Giảm giá (Voucher):</span>
+                            <span class="fw-bold" id="txtDiscount">- @giamGia.ToString("N0") đ</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-4">
+                            <span>Phí vận chuyển:</span>
+                            <span class="badge bg-success bg-opacity-10 text-success">Miễn phí</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-4 pt-3 border-top">
+                            <span class="fw-bold fs-5 text-dark">Tổng cộng:</span>
+                            <span class="fw-bold fs-3 text-primary" id="txtTotal">@tongCong.ToString("N0") đ</span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-muted text-uppercase mb-3">Hình thức thanh toán</label>
+
+                            <div class="form-check p-0 mb-2">
+                                <input class="form-check-input d-none" type="radio" name="paymentMethod" id="cod" value="0" checked>
+                                <label class="form-check-label w-100" for="cod">
+                                    <div class="payment-option p-3 rounded-3 d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-money-bill-wave fs-4 text-success me-3"></i>
+                                            <div>
+                                                <div class="fw-bold text-dark">Tiền mặt</div>
+                                                <small class="text-muted">Thanh toán khi nhận hàng</small>
+                                            </div>
+                                        </div>
+                                        <i class="fas fa-check-circle text-primary check-icon" style="display: none;"></i>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="form-check p-0">
+                                <input class="form-check-input d-none" type="radio" name="paymentMethod" id="online" value="1">
+                                <label class="form-check-label w-100" for="online">
+                                    <div class="payment-option p-3 rounded-3 d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-qrcode fs-4 text-primary me-3"></i>
+                                            <div>
+                                                <div class="fw-bold text-dark">Chuyển khoản</div>
+                                                <small class="text-muted">Quét mã QR Code</small>
+                                            </div>
+                                        </div>
+                                        <i class="fas fa-check-circle text-primary check-icon" style="display: none;"></i>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100 py-3 fw-bold rounded-pill shadow-lg" style="letter-spacing: 1px;">
+                            ĐẶT HÀNG NGAY <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // 1. Script cho UI Radio Button (Giữ nguyên)
+    document.querySelectorAll('input[name="paymentMethod"]').forEach((elem) => {
+        elem.addEventListener("change", function (event) {
+            document.querySelectorAll('.check-icon').forEach(icon => icon.style.display = 'none');
+            if (this.checked) {
+                this.nextElementSibling.querySelector('.check-icon').style.display = 'block';
+            }
+        });
+    });
+    var checkedRadio = document.querySelector('input[name="paymentMethod"]:checked');
+    if(checkedRadio) checkedRadio.nextElementSibling.querySelector('.check-icon').style.display = 'block';
+
+
+    // 2. Script AJAX Áp Dụng Voucher (Đã SỬA LỖI TÍNH TOÁN)
+    $(document).ready(function() {
+        // Ép kiểu an toàn ngay từ đầu. Razor in ra số, JS nhận là string.
+        var originalTotal = parseFloat('@tamTinh');
+
+        // Lấy discount ban đầu (có thể là 0)
+        var initialDiscount = parseFloat('@giamGia');
+
+        $('#btnApplyVoucher').click(function() {
+            var code = $('#voucherCode').val();
+            var btn = $(this);
+            var msgBox = $('#voucherMessage');
+
+            if(!code.trim()) {
+                msgBox.html('<span class="text-danger">Vui lòng nhập mã!</span>');
+                return;
+            }
+
+            btn.html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
+
+            $.ajax({
+                url: '/Cart/ApDungVoucher',
+                type: 'POST',
+                data: { maCode: code },
+                success: function(res) {
+                    if(res.success) {
+                        // 1. Thông báo thành công
+                        msgBox.html('<span class="text-success fw-bold"><i class="fas fa-check-circle"></i> ' + res.msg + '</span>');
+
+                        // 2. TÍNH TOÁN LẠI TIỀN (SỬA LỖI): Ép kiểu giá trị giảm giá nhận từ server
+                        var discount = parseFloat(res.discount);
+                        var newTotal = originalTotal - discount;
+
+                        if (isNaN(discount)) { // Kiểm tra nếu discount không phải là số
+                             msgBox.html('<span class="text-danger">Lỗi: Giá trị giảm giá không hợp lệ!</span>');
+                             btn.text('Áp dụng').prop('disabled', false);
+                             return;
+                        }
+
+                        if(newTotal < 0) newTotal = 0;
+
+                        // 3. Cập nhật giao diện (Hiển thị số tiền đã giảm và tổng cộng)
+                        $('#txtDiscount').text('- ' + discount.toLocaleString('vi-VN') + ' đ');
+                        $('#txtDiscount').addClass('fw-bold text-success animate__animated animate__pulse');
+
+                        $('#txtTotal').text(newTotal.toLocaleString('vi-VN') + ' đ');
+
+                        // 4. Khóa ô nhập
+                        $('#voucherCode').prop('disabled', true);
+                        btn.text('Đã dùng').prop('disabled', true).removeClass('btn-dark').addClass('btn-secondary');
+
+                    } else {
+                        // Báo lỗi và reset nút
+                        msgBox.html('<span class="text-danger"><i class="fas fa-exclamation-circle"></i> ' + res.msg + '</span>');
+                        btn.text('Áp dụng').prop('disabled', false);
+                    }
+                },
+                error: function() {
+                    msgBox.html('<span class="text-danger">Lỗi kết nối server!</span>');
+                    btn.text('Áp dụng').prop('disabled', false);
+                }
+            });
+        });
+    });
+</script>

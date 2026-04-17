@@ -1,0 +1,124 @@
+﻿@using DoAn_LTW_NhaHang.Models
+@model IEnumerable<tblMonAn>
+
+@{
+    ViewBag.Title = "Quản lý món ăn";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid py-2">
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body py-3">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <h4 class="fw-bold text-primary m-0"><i class="fas fa-utensils me-2"></i>Thực Đơn</h4>
+                </div>
+
+                <div class="col-md-4">
+                    <form action="@Url.Action("Index")" method="get" class="d-flex">
+                        <select name="maLoai" class="form-select me-2" onchange="this.form.submit()">
+                            <option value="">-- Tất cả các món --</option>
+                            @foreach (var loai in ViewBag.ListLoai as List<tblLoaiMon>)
+                            {
+                                <option value="@loai.MaLoai" @(ViewBag.MaLoaiHienTai == loai.MaLoai ? "selected" : "")>
+                                    @loai.TenLoai
+                                </option>
+                            }
+                        </select>
+                    </form>
+                </div>
+
+                <div class="col-md-4 text-end">
+                    <a href="@Url.Action("Create")" class="btn btn-success shadow-sm">
+                        <i class="fas fa-plus me-1"></i> Thêm Mới
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form action="@Url.Action("DeleteMultiple", "Admin")" method="post" id="formDelete">
+
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <span class="text-muted small">Tổng số món: <b>@Model.Count()</b></span>
+
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('CẢNH BÁO: Bạn có chắc chắn muốn xóa các món đã chọn không? Hành động này không thể hoàn tác!');">
+                    <i class="fas fa-trash-alt me-1"></i> Xóa các mục đã chọn
+                </button>
+            </div>
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-secondary">
+                            <tr>
+                                <th class="text-center" width="50">
+                                    <input type="checkbox" id="selectAll" class="form-check-input" style="cursor:pointer;" />
+                                </th>
+                                <th class="ps-3">Hình ảnh</th>
+                                <th>Tên món</th>
+                                <th>Loại</th>
+                                <th>Giá bán</th>
+                                <th class="text-center">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="text-center">
+                                            <input type="checkbox" name="selectedIds" value="@item.MaMon" class="form-check-input item-checkbox" />
+                                        </td>
+
+                                        <td class="ps-3">
+                                            <img src="@Url.Content("~/Content/Images/" + item.AnhDaiDien)"
+                                                 class="rounded-3 shadow-sm" width="60" height="45" style="object-fit:cover"
+                                                 onerror="this.src='https://via.placeholder.com/60x45'" />
+                                        </td>
+                                        <td class="fw-bold text-dark">@item.TenMon</td>
+                                        <td>
+                                            <span class="badge bg-info text-dark bg-opacity-10 border border-info px-2 py-1 rounded-pill">
+                                                @(item.tblLoaiMon != null ? item.tblLoaiMon.TenLoai : "Chưa phân loại")
+                                            </span>
+                                        </td>
+                                        <td class="text-danger fw-bold">@Html.FormatValue(item.DonGia, "{0:#,###}") đ</td>
+                                        <td class="text-center">
+                                            <a href="@Url.Action("Edit", new { id = item.MaMon })" class="btn btn-link text-primary p-0 me-2" title="Sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            @*<a href="@Url.Action("Delete", new { id = item.MaMon })" class="btn btn-link text-danger p-0" onclick="return confirm('Xóa món này?');">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </a>*@
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center py-5 text-muted">
+                                        <i class="fas fa-box-open fa-3x mb-3"></i><br />
+                                        Không tìm thấy món ăn nào.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('selectAll').addEventListener('change', function () {
+        var checkboxes = document.querySelectorAll('.item-checkbox');
+        for (var checkbox of checkboxes) {
+            checkbox.checked = this.checked;
+        }
+    });
+</script>

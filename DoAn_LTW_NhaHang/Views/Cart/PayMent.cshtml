@@ -1,0 +1,240 @@
+﻿@{
+    ViewBag.Title = "Kết quả đặt hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int hinhThucTT = ViewBag.HinhThucThanhToan ?? 0;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+<style>
+    /* Container chung */
+    .payment-container {
+        background-color: #f8f9fa;
+        min-height: 80vh;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    /* Style cho Card */
+    .success-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    /* Các icon tròn */
+    .icon-circle {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    .bg-success-light {
+        background-color: #d1e7dd;
+        color: #198754;
+    }
+
+    .bg-primary-light {
+        background-color: #cfe2ff;
+        color: #0d6efd;
+    }
+
+    /* Box thông tin */
+    .info-box {
+        background-color: #f8f9fa;
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+
+    /* Nút copy */
+    .copy-btn {
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+        .copy-btn:hover {
+            color: #0d6efd !important;
+        }
+</style>
+
+<div class="payment-container">
+    <div class="container">
+
+        @if (hinhThucTT == 0)
+        {
+            /* TRƯỜNG HỢP 1: COD */
+            /* Thay class cũ bằng: animate__animated animate__zoomIn (Hiệu ứng phóng to) */
+            <div class="row justify-content-center animate__animated animate__zoomIn">
+                <div class="col-md-6">
+                    <div class="card success-card bg-white p-5 text-center">
+                        <div class="icon-circle bg-success-light">
+                            <i class="fas fa-check fa-3x"></i>
+                        </div>
+
+                        <h2 class="fw-bold text-success mb-3">Đặt Hàng Thành Công!</h2>
+                        <p class="text-muted mb-4">Cảm ơn <span class="fw-bold text-dark">@ViewBag.TenKhach</span>. Đơn hàng của bạn đã được tiếp nhận.</p>
+
+                        <div class="info-box text-start mb-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-secondary">Mã đơn hàng:</span>
+                                <span class="fw-bold">#@ViewBag.MaDonHang</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-secondary">Thanh toán:</span>
+                                <span class="badge bg-secondary rounded-pill">Tiền mặt (COD)</span>
+                            </div>
+                            <hr class="my-2 border-secondary opacity-25">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-secondary">Tổng tiền:</span>
+                                <span class="fs-4 fw-bold text-danger">@string.Format("{0:N0}", ViewBag.TongTien) đ</span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <a href="@Url.Action("Index", "Home")" class="btn btn-warning text-white fw-bold py-3 rounded-pill shadow-sm">
+                                <i class="fas fa-utensils me-2"></i> Trở về trang chủ
+                            </a>
+                            <a href="@Url.Action("LichSuDonHang","User")" class="btn btn-outline-secondary py-2 rounded-pill border-0">
+                                Xem lịch sử đơn hàng
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            /* TRƯỜNG HỢP 2: QR CODE */
+            /* Sử dụng animate__fadeInDown (Trượt từ trên xuống nhẹ nhàng) */
+            <div class="row justify-content-center animate__animated animate__fadeInDown">
+                <div class="col-lg-8">
+                    <div class="card success-card bg-white">
+                        <div class="card-header bg-primary text-white text-center py-3">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-qrcode me-2"></i>THANH TOÁN ĐƠN HÀNG</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="row g-0">
+                                <div class="col-md-6 p-4 p-lg-5 border-end">
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="icon-circle bg-primary-light mb-0" style="width: 50px; height: 50px;">
+                                            <i class="fas fa-university"></i>
+                                        </div>
+                                        <div class="ms-3">
+                                            <h6 class="fw-bold mb-0">Chuyển khoản ngân hàng</h6>
+                                            <small class="text-muted">Quét mã QR để thanh toán nhanh</small>
+                                        </div>
+                                    </div>
+
+                                    <ul class="list-group list-group-flush mb-4">
+                                        <li class="list-group-item px-0 d-flex justify-content-between border-0 pb-1">
+                                            <span class="text-secondary">Ngân hàng:</span>
+                                            <span class="fw-bold">MB Bank</span>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between border-0 py-1">
+                                            <span class="text-secondary">Số tài khoản:</span>
+                                            <span class="fw-bold text-primary copy-btn" onclick="copyText('0333820793')">
+                                                0333820793 <i class="far fa-copy small ms-1"></i>
+                                            </span>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between border-0 py-1">
+                                            <span class="text-secondary">Chủ thẻ:</span>
+                                            <span class="fw-bold text-uppercase">NHA HANG NGON</span>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between border-0 py-1">
+                                            <span class="text-secondary">Nội dung:</span>
+                                            <span class="fw-bold text-warning copy-btn" onclick="copyText('THANHTOAN @ViewBag.MaDonHang')">
+                                                THANHTOAN @ViewBag.MaDonHang <i class="far fa-copy small ms-1"></i>
+                                            </span>
+                                        </li>
+                                        <li class="list-group-item px-0 d-flex justify-content-between border-top mt-2 pt-3">
+                                            <span class="text-secondary">Tổng tiền:</span>
+                                            <span class="fs-4 fw-bold text-danger">@string.Format("{0:N0}", ViewBag.TongTien) đ</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="col-md-6 bg-light p-4 p-lg-5 text-center d-flex flex-column align-items-center justify-content-center">
+                                    <div class="bg-white p-2 shadow-sm rounded-3 mb-3">
+                                        <img src="@ViewBag.LinkQR" alt="QR Code" class="img-fluid" style="max-height: 250px;">
+                                    </div>
+                                    <p class="small text-muted mb-4">Mở ứng dụng ngân hàng và quét mã này</p>
+
+                                    <button type="button" id="btnXacNhanThanhToan" data-mahd="@ViewBag.MaDonHang" class="btn btn-success fw-bold py-2 rounded-pill">
+                                        <i class="fas fa-check-circle me-2"></i> Tôi đã thanh toán
+                                    </button>
+                                    <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary py-2 rounded-pill border-0">
+                                        Thanh toán sau
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+</div>
+
+<script>
+    function copyText(text) {
+        navigator.clipboard.writeText(text).then(function () {
+            alert('Đã sao chép: ' + text);
+        }, function (err) {
+            console.error('Lỗi: ', err);
+        });
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+// Mã JavaScript đã sửa trong View
+<script>
+    $(document).ready(function () {
+        $('#btnXacNhanThanhToan').click(function () {
+            var maHD = $(this).data('mahd');
+            var btn = $(this);
+
+            // Hiệu ứng loading
+            btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i> Đang xử lý...');
+
+            $.ajax({
+                url: '@Url.Action("XacNhanThanhToan", "Cart")',
+                type: 'POST',
+                data: { maHD: maHD },
+                success: function (res) {
+                    // Hiển thị thông báo và thay đổi trạng thái UI
+                    if (res.success) {
+                        // 1. Hiển thị thông báo thành công
+                        $('#ketQuaThanhToan').html('<div class="alert alert-success fw-bold animate__animated animate__pulse"><i class="fas fa-check-circle me-2"></i> ' + res.msg + '</div>');
+                        btn.text('Đã xác nhận').removeClass('btn-success').addClass('btn-secondary');
+
+                        // 2. Tùy chọn: Thay đổi màu header/icon để thể hiện đã hoàn tất
+                        $('.card-header').removeClass('bg-primary').addClass('bg-success');
+
+                        // 3. CHUYỂN HƯỚNG SANG LỊCH SỬ ĐƠN HÀNG SAU 1.5 GIÂY
+                        if (res.redirectUrl) {
+                            setTimeout(function() {
+                                window.location.href = res.redirectUrl;
+                            }, 1500); // Chờ 1.5 giây
+                        }
+
+                    } else {
+                        // Báo lỗi và reset nút
+                        $('#ketQuaThanhToan').html('<div class="alert alert-danger fw-bold"><i class="fas fa-exclamation-circle me-2"></i> ' + res.msg + '</div>');
+                        btn.prop('disabled', false).html('<i class="fas fa-check-circle me-2"></i> Tôi đã thanh toán');
+                    }
+                },
+                error: function () {
+                    $('#ketQuaThanhToan').html('<div class="alert alert-danger fw-bold">Lỗi kết nối server khi xác nhận!</div>');
+                    btn.prop('disabled', false).html('<i class="fas fa-check-circle me-2"></i> Tôi đã thanh toán');
+                }
+            });
+        });
+    });
+</script>
+
+<div id="ketQuaThanhToan" class="mt-3 text-center"></div>

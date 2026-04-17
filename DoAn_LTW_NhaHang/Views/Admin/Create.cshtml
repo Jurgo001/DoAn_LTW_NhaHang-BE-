@@ -1,0 +1,133 @@
+﻿@model DoAn_LTW_NhaHang.tblMonAn
+
+@{
+    ViewBag.Title = "Thêm món ăn mới";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Admin")" class="text-decoration-none">Danh sách món</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Thêm mới</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+                    <h4 class="fw-bold text-primary m-0">
+                        <i class="fas fa-plus-circle me-2"></i>Thêm Món Ăn Mới
+                    </h4>
+                    <p class="text-muted small mt-1">Nhập thông tin đầy đủ để thêm món vào thực đơn</p>
+                </div>
+
+                <div class="card-body p-4">
+                    @using (Html.BeginForm("Create", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="p-3 bg-light rounded-3 border border-dashed text-center h-100 d-flex flex-column justify-content-center align-items-center">
+                                    <label class="form-label fw-bold mb-3 text-secondary">Ảnh hiển thị</label>
+
+                                    <div class="position-relative mb-3 bg-white rounded-3 shadow-sm d-flex align-items-center justify-content-center" style="width: 100%; height: 200px; overflow: hidden;">
+                                        <img src="https://via.placeholder.com/200x200?text=Chưa+chọn+ảnh"
+                                             class="img-fluid"
+                                             style="object-fit: cover; width: 100%; height: 100%;"
+                                             id="previewImage" />
+                                    </div>
+
+                                    <div class="w-100">
+                                        <label for="fileUpload" class="btn btn-outline-primary btn-sm w-100">
+                                            <i class="fas fa-upload me-1"></i> Tải ảnh lên
+                                        </label>
+                                        <input type="file" name="fileUpload" id="fileUpload" class="d-none" onchange="previewFile(this);" required />
+                                        <small class="d-block text-muted mt-2" style="font-size: 0.75rem;">(*Bắt buộc) JPG, PNG, JPEG</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-8">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold text-secondary">Tên món ăn <span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(m => m.TenMon, new { @class = "form-control form-control-lg", placeholder = "Ví dụ: Phở bò đặc biệt...", required = "required" })
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold text-secondary">Loại món</label>
+                                        @Html.DropDownList("MaLoai", null, new { @class = "form-select form-select-lg bg-light" })
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold text-secondary">Nhà cung cấp</label>
+                                        @Html.DropDownList("MaNCC", null, new { @class = "form-select bg-light" })
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold text-secondary">Giá bán <span class="text-danger">*</span></label>
+                                        <div class="input-group input-group-lg">
+                                            @Html.TextBoxFor(m => m.DonGia, new { @class = "form-control fw-bold text-success", type = "number", placeholder = "0" })
+                                            <span class="input-group-text fw-bold text-success bg-light">VNĐ</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold text-secondary d-block">Trạng thái</label>
+                                        <div class="btn-group w-100" role="group">
+                                            <input type="radio" class="btn-check" name="TrangThai" id="active" value="true" checked autocomplete="off">
+                                            <label class="btn btn-outline-success" for="active"><i class="fas fa-check me-1"></i> Đang bán</label>
+
+                                            <input type="radio" class="btn-check" name="TrangThai" id="inactive" value="false" autocomplete="off">
+                                            <label class="btn btn-outline-secondary" for="inactive"><i class="fas fa-ban me-1"></i> Ẩn món</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold text-secondary">Mô tả chi tiết</label>
+                                        @Html.TextAreaFor(m => m.MoTa, new { @class = "form-control", rows = 4, placeholder = "Mô tả nguyên liệu, hương vị..." })
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="form-check p-3 bg-light rounded border">
+                                            <input type="checkbox" class="form-check-input" id="xacNhan" required style="transform: scale(1.2); margin-right: 10px;">
+                                            <label class="form-check-label text-muted small pt-1" for="xacNhan">
+                                                Tôi xác nhận các thông tin trên là chính xác và đồng ý thêm vào hệ thống.
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4 border-light">
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="@Url.Action("Index")" class="btn btn-light border px-4">
+                                <i class="fas fa-arrow-left me-1"></i> Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm">
+                                <i class="fas fa-save me-1"></i> Lưu Món Mới
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewFile(input) {
+        var file = input.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                document.getElementById("previewImage").src = reader.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+</script>

@@ -1,0 +1,46 @@
+﻿@model DoAn_LTW_NhaHang.tblVoucher
+@{ ViewBag.Title = "Thêm Voucher"; Layout = "~/Views/Shared/_LayoutBoss.cshtml"; }
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-header bg-white border-0 pt-4 text-center">
+                    <h4 class="fw-bold text-success">Thêm Voucher Mới</h4>
+                </div>
+                <div class="card-body p-4">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="form-floating mb-3">
+                            @Html.TextBoxFor(m => m.TenVoucher, new { @class = "form-control", required = "required", placeholder = "Tên" })
+                            <label>Tên Voucher</label>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6 form-floating">
+                                @Html.TextBoxFor(m => m.GiaTri, new { @class = "form-control", type = "number", required = "required", placeholder = "Giá" })
+                                <label class="ps-4">Giá trị (VNĐ)</label>
+                            </div>
+                            <div class="col-6 form-floating">
+                                @Html.TextBoxFor(m => m.DiemDoi, new { @class = "form-control", type = "number", required = "required", placeholder = "Điểm" })
+                                <label class="ps-4">Điểm đổi</label>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-6 form-floating">
+                                @Html.TextBoxFor(m => m.SoLuong, new { @class = "form-control", type = "number", required = "required", placeholder = "SL" })
+                                <label class="ps-4">Số lượng</label>
+                            </div>
+                            <div class="col-6 form-floating">
+                                @Html.TextBoxFor(m => m.NgayHetHan, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
+                                <label class="ps-4">Hạn sử dụng</label>
+                                @Html.ValidationMessageFor(m => m.NgayHetHan, "", new { @class = "text-danger small" })
+                            </div>
+                        </div>
+                        <button class="btn btn-success w-100 py-2 rounded-pill fw-bold">Tạo Voucher</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

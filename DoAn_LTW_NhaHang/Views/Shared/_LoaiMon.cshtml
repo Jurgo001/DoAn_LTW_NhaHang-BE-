@@ -1,0 +1,95 @@
+﻿@using DoAn_LTW_NhaHang.Models
+@model IEnumerable<tblLoaiMon>
+
+@* --- CHỈ HIỆN KHI KHÔNG PHẢI ADMIN --- *@
+@if (Session["Admin"] == null)
+{
+    <style>
+        /* Khung chứa danh sách: Giới hạn chiều cao + Thanh cuộn đẹp */
+        .category-menu-container {
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+            /* Tùy chỉnh thanh cuộn */
+            .category-menu-container::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .category-menu-container::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 10px;
+            }
+
+            .category-menu-container::-webkit-scrollbar-thumb {
+                background: #ffb8b8;
+                border-radius: 10px;
+            }
+
+                .category-menu-container::-webkit-scrollbar-thumb:hover {
+                    background: #ff6b6b;
+                }
+
+        /* Item trong danh sách */
+        .category-menu .list-group-item {
+            border: none;
+            background-color: #fff;
+            margin-bottom: 4px;
+            padding: 10px 15px;
+            border-radius: 8px !important;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #555;
+            border-left: 3px solid transparent;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+            .category-menu .list-group-item:hover {
+                background-color: #fff0f0;
+                color: #ff6b6b;
+                border-left-color: #ff6b6b;
+                padding-left: 20px;
+                transform: translateX(3px);
+            }
+
+            .category-menu .list-group-item a {
+                text-decoration: none;
+                color: inherit;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+        .icon-box {
+            margin-right: 10px;
+            color: #ff6b6b;
+            opacity: 0.7;
+        }
+    </style>
+
+    <div class="list-group category-menu category-menu-container">
+        <div class="list-group-item list-group-item-action">
+            <a href="@Url.Action("Index", "Home")">
+                <span>
+                    <i class="fas fa-th-large icon-box"></i> Tất cả
+                </span>
+                <i class="fas fa-chevron-right small opacity-25"></i>
+            </a>
+        </div>
+
+        @foreach (var item in Model)
+        {
+            <div class="list-group-item list-group-item-action">
+                <a href="@Url.Action("TimTheoMonAn", "Home", new { id = item.MaLoai})">
+                    <span class="text-truncate">
+                        <i class="fas fa-utensils icon-box"></i> @item.TenLoai
+                    </span>
+                    <i class="fas fa-chevron-right small opacity-25"></i>
+                </a>
+            </div>
+        }
+    </div>
+}

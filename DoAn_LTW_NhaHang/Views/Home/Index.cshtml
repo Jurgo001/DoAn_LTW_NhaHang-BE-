@@ -1,0 +1,215 @@
+﻿@using DoAn_LTW_NhaHang.Models
+@using DoAn_LTW_NhaHang.Controllers
+@model List<tblMonAn>
+
+@{
+    ViewBag.Title = "Thực đơn hôm nay";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var topBestSeller = ViewBag.TopMonAn as List<HomeController.MonAnViewModel>;
+}
+
+<style>
+    /* Card Style */
+    .food-card {
+        border: 1px solid #f8f9fa;
+        border-radius: 20px;
+        background: #fff;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        overflow: hidden;
+        position: relative;
+        height: 100%;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    }
+
+        .food-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(255, 107, 107, 0.15);
+            border-color: #ff6b6b;
+        }
+
+    .card-img-wrapper {
+        height: 200px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+    /* Zoom ảnh khi hover */
+    .food-card:hover .card-img-wrapper img {
+        transform: scale(1.1);
+    }
+
+    /* --- NÚT DẤU CỘNG (ẨN/HIỆN) --- */
+    .btn-add-cart {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: white;
+        color: #ff6b6b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        border: none;
+        z-index: 3;
+        text-decoration: none;
+        /* Trạng thái mặc định: Ẩn và bị đẩy xuống dưới */
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+        .btn-add-cart:hover {
+            background: #ff6b6b;
+            color: white;
+            transform: scale(1.1) !important; /* Phóng to nhẹ khi rê vào nút */
+        }
+
+    /* KHI RÊ CHUỘT VÀO CARD THÌ MỚI HIỆN NÚT */
+    .food-card:hover .btn-add-cart {
+        opacity: 1; /* Hiện lên */
+        transform: translateY(0); /* Trồi lên vị trí cũ */
+    }
+    /* ------------------------------ */
+
+    /* Badge Bán Chạy */
+    .badge-best-seller {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: linear-gradient(45deg, #ff9f43, #ff6b6b);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        z-index: 2;
+        box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+        text-transform: uppercase;
+    }
+
+    /* Tiêu đề section */
+    .section-title {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 30px;
+        font-weight: 800;
+        color: #2d3436;
+    }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 4px;
+            background: #ff6b6b;
+            bottom: -10px;
+            left: 0;
+            border-radius: 2px;
+        }
+
+    .price-text {
+        color: #ff6b6b;
+        font-weight: 800;
+        font-size: 1.2rem;
+    }
+</style>
+
+<div class="mb-5 animate__animated animate__fadeInDown">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            @if (Session["User"] != null)
+            {
+                var user = Session["User"] as tblKhachHang;
+                <h6 class="text-muted mb-1">Xin chào, @user.TenKH 👋</h6>
+            }
+            else
+            {
+                <h6 class="text-muted mb-1">Chào mừng bạn!</h6>
+            }
+            <h2 class="section-title"><i class="fas fa-crown text-warning me-2"></i>Top 10 Món Bán Chạy</h2>
+        </div>
+    </div>
+
+    @if (topBestSeller != null && topBestSeller.Any())
+    {
+        <div class="row gx-4 gy-4 mb-5">
+            @foreach (var item in topBestSeller)
+            {
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="food-card">
+                        <div class="badge-best-seller">
+                            <i class="fas fa-fire me-1"></i>Best Seller
+                        </div>
+
+                        <div class="card-img-wrapper" style="height: 140px;">
+                            <a href="@Url.Action("Detail", "Home", new { id = item.MaMon })">
+                                <img src="@Url.Content("~/Content/Images/" + item.AnhDaiDien)"
+                                     alt="@item.TenMon"
+                                     onerror="this.src='https://via.placeholder.com/300x200?text=Mon+An'">
+                            </a>
+                        </div>
+
+                        <div class="card-body p-3 text-center">
+                            <h6 class="fw-bold text-dark mb-1 text-truncate">@item.TenMon</h6>
+                            <div class="price-text">@Html.FormatValue(item.DonGia, "{0:#,###}")đ</div>
+                            <small class="text-muted" style="font-size: 0.7rem;">Đã bán: @item.TongSoLuongBan</small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<div>
+    <h3 class="fw-bold text-dark mb-4 border-start border-4 border-danger ps-3">Thực Đơn Hôm Nay</h3>
+
+    <div class="row gx-4 gy-4">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="col-6 col-md-4 col-lg-3 animate__animated animate__fadeInUp">
+                    <div class="food-card h-100">
+                        <div class="card-img-wrapper">
+                            <a href="@Url.Action("Detail", "Home", new { id = item.MaMon })">
+                                <img src="@Url.Content("~/Content/Images/" + item.AnhDaiDien)"
+                                     alt="@item.TenMon"
+                                     onerror="this.src='https://via.placeholder.com/300x200?text=Mon+An'">
+                            </a>
+
+                            <a href="@Url.Action("AddToCart", "Cart", new { id = item.MaMon, strURL = Request.Url.ToString() })"
+                               class="btn-add-cart"
+                               title="Thêm vào giỏ">
+                                <i class="fas fa-plus"></i>
+                            </a>
+                        </div>
+
+                        <div class="card-body">
+                            <h5 class="fw-bold text-truncate" title="@item.TenMon">
+                                <a href="@Url.Action("Detail", "Home", new { id = item.MaMon })" class="text-decoration-none text-dark">
+                                    @item.TenMon
+                                </a>
+                            </h5>
+                            <p class="text-muted small text-truncate">@item.MoTa</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="price-text">@Html.FormatValue(item.DonGia, "{0:#,###}")đ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

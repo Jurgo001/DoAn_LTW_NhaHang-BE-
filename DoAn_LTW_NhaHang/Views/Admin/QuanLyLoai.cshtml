@@ -1,0 +1,108 @@
+﻿@model IEnumerable<DoAn_LTW_NhaHang.tblLoaiMon>
+@{
+    ViewBag.Title = "Quản lý loại món";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid py-4">
+
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h3 class="fw-bold text-primary m-0">
+                <i class="fas fa-tags me-2"></i>Danh Mục Loại Món
+            </h3>
+            <span class="text-muted small">Quản lý các nhóm thực đơn của nhà hàng</span>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <a href="@Url.Action("ThemMoiLoai")" class="btn btn-success rounded-pill shadow-sm px-4">
+                <i class="fas fa-plus me-2"></i> Thêm Loại Mới
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-secondary">
+                        <tr>
+                            <th class="ps-4 py-3" style="width: 100px;">ID</th>
+                            <th class="py-3">Tên Loại</th>
+                            <th class="py-3">Mô tả</th>
+                            <th class="text-center py-3" style="width: 150px;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold text-muted">#@item.MaLoai</td>
+
+                                    <td>
+                                        <span class="fw-bold text-dark fs-6">@item.TenLoai</span>
+                                    </td>
+
+                                    <td class="text-muted">
+                                        @if (!string.IsNullOrEmpty(item.MoTa))
+                                        {
+                                            <span>@item.MoTa</span>
+                                        }
+                                        else
+                                        {
+                                            <em class="small text-secondary">Đang cập nhật...</em>
+                                        }
+                                    </td>
+
+                                    <td class="text-center">
+                                        <a href="@Url.Action("SuaLoai", new { id = item.MaLoai })" class="btn btn-outline-primary btn-sm rounded-circle me-1" title="Chỉnh sửa">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+
+                                        <a href="@Url.Action("XoaLoai", new { id = item.MaLoai })"
+                                           class="btn btn-outline-danger btn-sm rounded-circle"
+                                           title="Xóa loại này"
+                                           onclick="return confirm('CẢNH BÁO: Bạn có chắc chắn muốn xóa loại @item.TenLoai?\nTất cả món ăn thuộc loại này có thể bị ảnh hưởng.');">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="fas fa-folder-open fa-3x mb-3 opacity-50"></i>
+                                        <p>Chưa có loại món nào. Hãy thêm mới!</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-footer bg-white border-0 py-3 ps-4">
+            <small class="text-muted">Tổng số: <b>@Model.Count()</b> loại món</small>
+        </div>
+    </div>
+</div>
