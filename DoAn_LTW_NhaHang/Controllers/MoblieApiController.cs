@@ -44,7 +44,7 @@ namespace DoAn_LTW_NhaHang.Controllers
         {
             db.Configuration.ProxyCreationEnabled = false;
 
-            // 1. Lấy toàn bộ bình luận của món này
+            // 1. Lấy toàn bộ bình luận của món này (TỪ DATABASE LÊN RAM)
             var danhSachCmt = db.tblLienHes
                 .Where(l => l.ChuDe.Contains("ID: " + id))
                 .OrderByDescending(l => l.NgayGui)
@@ -52,28 +52,38 @@ namespace DoAn_LTW_NhaHang.Controllers
                     l.TenNguoiGui,
                     l.NoiDung,
                     l.SoSao,
-                    l.HinhAnhBinhLuan, // Chuỗi Base64 ảnh
+                    l.HinhAnhBinhLuan,
                     l.NgayGui
                 }).ToList();
 
-            // 2. Tính toán các chỉ số
+            // 2. Tính toán sao
             double trungBinhSao = danhSachCmt.Any() ? danhSachCmt.Average(l => (double)(l.SoSao ?? 5)) : 5.0;
 
-            // 3. Trả về object tổng hợp
-            var mon = db.tblMonAns.Where(m => m.MaMon == id).Select(m => new {
-                m.MaMon,
-                m.TenMon,
-                m.MoTa,
-                m.DonGia,
-                m.AnhDaiDien,
-                m.MaLoai,
+            // 3. Lấy đúng 1 món ăn từ bảng tblMonAn (TỪ DATABASE LÊN RAM)
+            var monDb = db.tblMonAns.Where(m => m.MaMon == id).FirstOrDefault();
+
+            // Nếu không tìm thấy món thì kết thúc sớm
+            if (monDb == null) return Json(null, JsonRequestBehavior.AllowGet);
+
+            // 4. Lấy thêm danh sách ảnh phụ (nếu có)
+            var hinhAnhs = db.tblHinhAnhs.Where(h => h.MaMon == id).Select(h => h.TenHinh).ToList();
+
+            // 5. Gói tất cả vào một Object mới tinh để gửi về cho Flutter
+            var result = new
+            {
+                monDb.MaMon,
+                monDb.TenMon,
+                monDb.MoTa,
+                monDb.DonGia,
+                monDb.AnhDaiDien,
+                monDb.MaLoai,
                 DiemTrungBinh = trungBinhSao,
                 TongDanhGia = danhSachCmt.Count,
-                BinhLuans = danhSachCmt, // Gửi kèm danh sách cmt về cho Flutter
-                HinhAnhs = db.tblHinhAnhs.Where(h => h.MaMon == m.MaMon).Select(h => h.TenHinh).ToList()
-            }).FirstOrDefault();
+                BinhLuans = danhSachCmt, // Gắn mảng bình luận vào đây rất an toàn
+                HinhAnhs = hinhAnhs
+            };
 
-            return Json(mon, JsonRequestBehavior.AllowGet);
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
