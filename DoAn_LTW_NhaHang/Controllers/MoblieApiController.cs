@@ -8,11 +8,11 @@ namespace DoAn_LTW_NhaHang.Controllers
 {
     public class MobileApiController : Controller
     {
-        // 1. Khai báo biến dùng chung cho tất cả các hàm bên dưới
-        QL_NhaHangEntities db = new QL_NhaHangEntities();
+        // 1. Đã thêm chữ 'readonly' để diệt cảnh báo vàng
+        readonly QL_NhaHangEntities db = new QL_NhaHangEntities();
 
         // ==========================================
-        // CÁC HÀM GET (LẤY DỮ LIỆU)
+        // CÁC HÀM GET (LẤY DỮ LIỆU VỀ APP)
         // ==========================================
 
         [HttpGet]
@@ -38,13 +38,12 @@ namespace DoAn_LTW_NhaHang.Controllers
             return Json(danhMuc, JsonRequestBehavior.AllowGet);
         }
 
-
         [HttpGet]
         public JsonResult GetChiTietMon(int id)
         {
             db.Configuration.ProxyCreationEnabled = false;
 
-            // 1. Lấy toàn bộ bình luận của món này (TỪ DATABASE LÊN RAM)
+            // Lấy bình luận từ tblLienHe (Đã cập nhật SoSao và HinhAnhBinhLuan)
             var danhSachCmt = db.tblLienHes
                 .Where(l => l.ChuDe.Contains("ID: " + id))
                 .OrderByDescending(l => l.NgayGui)
@@ -56,19 +55,13 @@ namespace DoAn_LTW_NhaHang.Controllers
                     l.NgayGui
                 }).ToList();
 
-            // 2. Tính toán sao
             double trungBinhSao = danhSachCmt.Any() ? danhSachCmt.Average(l => (double)(l.SoSao ?? 5)) : 5.0;
 
-            // 3. Lấy đúng 1 món ăn từ bảng tblMonAn (TỪ DATABASE LÊN RAM)
             var monDb = db.tblMonAns.Where(m => m.MaMon == id).FirstOrDefault();
-
-            // Nếu không tìm thấy món thì kết thúc sớm
             if (monDb == null) return Json(null, JsonRequestBehavior.AllowGet);
 
-            // 4. Lấy thêm danh sách ảnh phụ (nếu có)
             var hinhAnhs = db.tblHinhAnhs.Where(h => h.MaMon == id).Select(h => h.TenHinh).ToList();
 
-            // 5. Gói tất cả vào một Object mới tinh để gửi về cho Flutter
             var result = new
             {
                 monDb.MaMon,
@@ -79,32 +72,11 @@ namespace DoAn_LTW_NhaHang.Controllers
                 monDb.MaLoai,
                 DiemTrungBinh = trungBinhSao,
                 TongDanhGia = danhSachCmt.Count,
-                BinhLuans = danhSachCmt, // Gắn mảng bình luận vào đây rất an toàn
+                BinhLuans = danhSachCmt,
                 HinhAnhs = hinhAnhs
             };
 
             return Json(result, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpPost]
-        public JsonResult GuiBinhLuan(int maMon, string tenKH, string noiDung, int soSao, string hinhAnhBase64)
-        {
-            try
-            {
-                tblLienHe bl = new tblLienHe
-                {
-                    TenNguoiGui = tenKH,
-                    NoiDung = noiDung,
-                    SoSao = soSao,
-                    HinhAnhBinhLuan = hinhAnhBase64, // Nhận chuỗi ảnh từ Flutter
-                    ChuDe = "Binh luan MonAn ID: " + maMon,
-                    NgayGui = DateTime.Now
-                };
-                db.tblLienHes.Add(bl);
-                db.SaveChanges();
-                return Json(new { success = true });
-            }
-            catch { return Json(new { success = false }); }
         }
 
         [HttpGet]
@@ -122,8 +94,47 @@ namespace DoAn_LTW_NhaHang.Controllers
             return Json(ds, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public JsonResult GetThongTinKhachHang(int maKH)
+        {
+            db.Configuration.ProxyCreationEnabled = false;
+            var khachHang = db.tblKhachHangs
+                .Where(k => k.MaKH == maKH)
+                .Select(k => new {
+                    k.MaKH,
+                    k.TenKH,
+                    k.DienThoai, 
+                    k.Email,
+                    k.DiaChi
+                }).FirstOrDefault();
+
+            if (khachHang == null)
+                return Json(new { success = false, message = "Không tìm thấy khách hàng" }, JsonRequestBehavior.AllowGet);
+
+            return Json(new { success = true, data = khachHang }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetDanhSachVoucher()
+        {
+            db.Configuration.ProxyCreationEnabled = false;
+
+            var vouchers = db.tblVouchers
+                .Select(v => new {
+                    v.MaVoucher,
+                    v.TenVoucher,
+                    v.GiaTri,   
+                    v.DiemDoi,
+                    v.SoLuong,
+                    v.NgayHetHan
+                }).ToList();
+
+            return Json(vouchers, JsonRequestBehavior.AllowGet);
+        }
+
+
         // ==========================================
-        // CÁC HÀM POST (GỬI DỮ LIỆU)
+        // CÁC HÀM POST (GỬI DỮ LIỆU TỪ APP LÊN)
         // ==========================================
 
         [HttpPost]
@@ -164,16 +175,61 @@ namespace DoAn_LTW_NhaHang.Controllers
         }
 
         [HttpPost]
-        public JsonResult ToggleYeuThich(int maKH, int maMon)
+        public JsonResult GuiBinhLuan(int maMon, string tenKH, string noiDung, int soSao, string hinhAnhBase64)
         {
-            // Logic xử lý yêu thích ở đây
+            try
+            {
+                tblLienHe bl = new tblLienHe
+                {
+                    TenNguoiGui = tenKH,
+                    NoiDung = noiDung,
+                    SoSao = soSao,
+                    HinhAnhBinhLuan = hinhAnhBase64,
+                    ChuDe = "Binh luan MonAn ID: " + maMon,
+                    NgayGui = DateTime.Now
+                };
+                db.tblLienHes.Add(bl);
+                db.SaveChanges();
+                return Json(new { success = true });
+            }
+            catch { return Json(new { success = false }); }
+        }
+
+        [HttpPost]
+        public JsonResult GuiGhiChuGopY(int maKH, string hoTen, string sdt, string noiDungGhiChu)
+        {
+            try
+            {
+                tblLienHe lienHe = new tblLienHe
+                {
+                    TenNguoiGui = hoTen,
+                    NoiDung = noiDungGhiChu,
+                    ChuDe = "Gop y tu Khach Hang ID: " + maKH + " - SDT: " + sdt,
+                    NgayGui = DateTime.Now
+                };
+
+                db.tblLienHes.Add(lienHe);
+                db.SaveChanges();
+                return Json(new { success = true, message = "Cảm ơn bạn đã gửi góp ý!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+       
+        public JsonResult ToggleYeuThich()
+        {
+            
             return Json(new { success = true });
         }
 
-    } // Kết thúc Class MobileApiController
+    } 
 
     // ==========================================
-    // CÁC CLASS MODEL (PHẢI NẰM NGOÀI CONTROLLER)
+    // CÁC CLASS MODEL DỮ LIỆU
     // ==========================================
     public class OrderRequest
     {
