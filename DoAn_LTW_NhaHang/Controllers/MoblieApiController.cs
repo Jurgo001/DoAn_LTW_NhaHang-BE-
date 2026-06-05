@@ -136,6 +136,43 @@ namespace DoAn_LTW_NhaHang.Controllers
         // ==========================================
         // CÁC HÀM POST (GỬI DỮ LIỆU TỪ APP LÊN)
         // ==========================================
+        [HttpPost]
+        public JsonResult DangNhap(LoginRequest request)
+        {
+            try
+            {
+                if (request == null || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+                {
+                    return Json(new { success = false, message = "Vui lòng nhập đầy đủ Email và Mật khẩu!" });
+                }
+
+                db.Configuration.ProxyCreationEnabled = false;
+
+                // Lưu ý: Nếu cột mật khẩu trong Database của bạn tên khác (VD: Password, Pass), thì sửa chữ MatKhau lại nha
+                var khachHang = db.tblKhachHangs
+                                  .Where(k => k.Email == request.Email && k.MatKhau == request.Password)
+                                  .Select(k => new {
+                                      k.MaKH,
+                                      k.TenKH,
+                                      k.Email
+                                  }).FirstOrDefault();
+
+                if (khachHang != null)
+                {
+                    return Json(new { success = true, data = khachHang });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Sai tài khoản hoặc mật khẩu!" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Lỗi hệ thống C#: " + ex.Message });
+            }
+        }
+
+
 
         [HttpPost]
         public JsonResult DatHang(OrderRequest request)
@@ -149,7 +186,8 @@ namespace DoAn_LTW_NhaHang.Controllers
                 {
                     MaKH = request.MaKH,
                     NgayLap = DateTime.Now,
-                    TongTien = request.Items.Sum(x => x.SoLuong * x.DonGia),
+                    // 👉 SỬA DÒNG NÀY: Lấy số tiền từ Mobile gửi lên thay vì tự tính
+                    TongTien = request.TongTienThanhToan,
                     TinhTrang = 1,
                     DaThanhToan = false,
                     GhiChu = request.GhiChu ?? "Đặt hàng từ Mobile App"
@@ -235,6 +273,7 @@ namespace DoAn_LTW_NhaHang.Controllers
     {
         public int MaKH { get; set; }
         public string GhiChu { get; set; }
+        public decimal TongTienThanhToan { get; set; } // 👉 THÊM DÒNG NÀY
         public List<CartItemRequest> Items { get; set; }
     }
 
@@ -243,5 +282,11 @@ namespace DoAn_LTW_NhaHang.Controllers
         public int MaMon { get; set; }
         public int SoLuong { get; set; }
         public decimal DonGia { get; set; }
+    }
+
+    public class LoginRequest
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }
