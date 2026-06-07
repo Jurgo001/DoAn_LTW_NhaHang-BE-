@@ -104,7 +104,8 @@ namespace DoAn_LTW_NhaHang.Controllers
                     k.MaKH,
                     k.TenKH,
                     k.DienThoai, 
-                    k.Email
+                    k.Email,
+                    k.Avarta
                 }).FirstOrDefault();
 
             if (khachHang == null)
@@ -212,7 +213,73 @@ namespace DoAn_LTW_NhaHang.Controllers
                 return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
+        // 1. API LẤY ĐIỂM HIỆN TẠI CỦA KHÁCH HÀNG
+        [HttpGet]
+        public JsonResult GetDiemHienTai(int maKH)
+        {
+            try
+            {
+                // Tính điểm kiếm được (Chỉ tính đơn đã thanh toán: TinhTrang == 4)
+                decimal tongTienDaThanhToan = db.tblHoaDons
+                    .Where(n => n.MaKH == maKH && n.TinhTrang == 4)
+                    .Sum(n => (decimal?)n.TongTien) ?? 0;
 
+                int diemKiemDuoc = (int)Math.Floor(tongTienDaThanhToan / 10000m) * 10;
+
+                // Tính điểm đã tiêu xài (đổi voucher)
+                int diemDaDung = db.tblLichSuDoiDiems
+                    .Where(n => n.MaKH == maKH)
+                    .Sum(n => (int?)n.DiemDaTru) ?? 0;
+
+                int diemHienTai = diemKiemDuoc - diemDaDung;
+
+                return Json(new { success = true, diem = diemHienTai }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        // 2. API LẤY DANH SÁCH VOUCHER KHÁCH ĐANG SỞ HỮU TRONG KHO
+        [HttpGet]
+        public JsonResult GetVoucherCuaToi(int maKH)
+        {
+            try
+            {
+                db.Configuration.ProxyCreationEnabled = false;
+
+                // Tìm trong bảng Lịch Sử Đổi Điểm những mã chưa sử dụng (TrangThai == false)
+                var khoVoucher = db.tblLichSuDoiDiems
+                    .Where(v => v.MaKH == maKH && v.TrangThai == false)
+                    .Select(v => new {
+                        v.MaCode,
+                        v.NgayDoi,
+                        v.DiemDaTru,
+                        // Kéo thông tin từ bảng gốc tblVoucher sang
+                        TenVoucher = v.tblVoucher.TenVoucher,
+                        GiaTri = v.tblVoucher.GiaTri,
+                        NgayHetHan = v.tblVoucher.NgayHetHan
+                    }).ToList();
+
+                // Format lại ngày tháng cho App Mobile dễ đọc
+                var result = khoVoucher.Select(v => new {
+                    v.MaCode,
+                    v.TenVoucher,
+                    v.GiaTri,
+                    v.DiemDaTru,
+                    NgayDoi = v.NgayDoi.HasValue ? v.NgayDoi.Value.ToString("dd/MM/yyyy") : "",
+                    NgayHetHan = v.NgayHetHan.HasValue ? v.NgayHetHan.Value.ToString("dd/MM/yyyy") : "",
+                    ConHan = v.NgayHetHan >= DateTime.Now // Cờ check xem còn hạn hay không để UI hiển thị màu xám/đỏ
+                }).ToList();
+
+                return Json(new { success = true, data = result }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
         // ==========================================
         // CÁC HÀM POST (GỬI DỮ LIỆU TỪ APP LÊN)
         // ==========================================
@@ -221,20 +288,26 @@ namespace DoAn_LTW_NhaHang.Controllers
         {
             try
             {
-                if (request == null || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+                // 1. Lấy chuỗi người dùng nhập vào (App Flutter đang gửi lên bằng biến TaiKhoan)
+                string inputData = request.TaiKhoan;
+
+                // Nếu trống thì báo lỗi chung
+                if (request == null || string.IsNullOrEmpty(inputData) || string.IsNullOrEmpty(request.Password))
                 {
-                    return Json(new { success = false, message = "Vui lòng nhập đầy đủ Email và Mật khẩu!" });
+                    return Json(new { success = false, message = "Vui lòng nhập Email/SĐT và Mật khẩu!" });
                 }
 
                 db.Configuration.ProxyCreationEnabled = false;
 
-                // Lưu ý: Nếu cột mật khẩu trong Database của bạn tên khác (VD: Password, Pass), thì sửa chữ MatKhau lại nha
+                // 2. Tìm kiếm linh hoạt: So sánh inputData với cột Email HOẶC cột DienThoai
                 var khachHang = db.tblKhachHangs
-                                  .Where(k => k.Email == request.Email && k.MatKhau == request.Password)
+                                  .Where(k => (k.Email == inputData || k.DienThoai == inputData)
+                                           && k.MatKhau == request.Password)
                                   .Select(k => new {
                                       k.MaKH,
                                       k.TenKH,
-                                      k.Email
+                                      k.Email,
+                                      k.DienThoai // Trả về thêm số điện thoại cho App
                                   }).FirstOrDefault();
 
                 if (khachHang != null)
@@ -251,6 +324,7 @@ namespace DoAn_LTW_NhaHang.Controllers
                 return Json(new { success = false, message = "Lỗi hệ thống C#: " + ex.Message });
             }
         }
+
 
 
 
@@ -442,6 +516,113 @@ namespace DoAn_LTW_NhaHang.Controllers
                 return Json(new { success = false, message = "Lỗi hệ thống: " + ex.Message });
             }
         }
+        [HttpPost]
+        public JsonResult DoiVoucher(ExchangeVoucherRequest request)
+        {
+            try
+            {
+                // Sử dụng Transaction vì liên quan đến trừ điểm và trừ số lượng kho (Tránh lỗi mất dữ liệu giữa chừng)
+                using (var transaction = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        // 1. Kiểm tra Voucher tồn tại và còn lượt đổi không
+                        var voucher = db.tblVouchers.Find(request.MaVoucher);
+                        if (voucher == null || voucher.SoLuong <= 0)
+                        {
+                            return Json(new { success = false, message = "Voucher này đã hết lượt hoặc không tồn tại!" });
+                        }
+                        if (voucher.NgayHetHan < DateTime.Now)
+                        {
+                            return Json(new { success = false, message = "Voucher này đã hết hạn đổi!" });
+                        }
+
+                        // 2. Tính lại số điểm thực tế khách đang có (Chống hack điểm từ phía App)
+                        decimal tongTien = db.tblHoaDons.Where(n => n.MaKH == request.MaKH && n.TinhTrang == 4).Sum(n => (decimal?)n.TongTien) ?? 0;
+                        int diemKiemDuoc = (int)Math.Floor(tongTien / 10000m) * 10;
+                        int diemDaDung = db.tblLichSuDoiDiems.Where(n => n.MaKH == request.MaKH).Sum(n => (int?)n.DiemDaTru) ?? 0;
+                        int diemHienCo = diemKiemDuoc - diemDaDung;
+
+                        // 3. Kiểm tra đủ điểm không
+                        if (diemHienCo < voucher.DiemDoi)
+                        {
+                            return Json(new { success = false, message = "Bạn không đủ điểm để đổi Voucher này!" });
+                        }
+
+                        // 4. Trừ số lượng kho Voucher
+                        voucher.SoLuong--;
+
+                        // 5. Lưu vào Lịch sử đổi điểm (Trừ điểm khách hàng)
+                        tblLichSuDoiDiem ls = new tblLichSuDoiDiem
+                        {
+                            MaKH = request.MaKH,
+                            MaVoucher = request.MaVoucher,
+                            NgayDoi = DateTime.Now,
+                            DiemDaTru = voucher.DiemDoi,
+                            TrangThai = false, // Chưa sử dụng
+                            // Sinh mã code random
+                            MaCode = "VOUCHER_" + DateTime.Now.Ticks.ToString().Substring(10, 6)
+                        };
+
+                        db.tblLichSuDoiDiems.Add(ls);
+                        db.SaveChanges();
+                        transaction.Commit(); // Lưu toàn bộ thay đổi
+
+                        return Json(new { success = true, message = "Đổi thành công! Voucher đã được thêm vào Kho của bạn." });
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback(); // Nếu lỗi ở đâu đó, hoàn tác lại toàn bộ (Không bị mất điểm oan)
+                        return Json(new { success = false, message = "Lỗi hệ thống khi đổi: " + ex.Message });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Lỗi kết nối C#: " + ex.Message });
+            }
+        }
+        [HttpPost]
+        public JsonResult CapNhatHoSoMobile(UpdateProfileMobileRequest request)
+        {
+            try
+            {
+                // 1. Tìm khách hàng trong Database
+                var user = db.tblKhachHangs.Find(request.MaKH);
+                if (user == null)
+                    return Json(new { success = false, message = "Không tìm thấy người dùng!" });
+
+                // 2. Cập nhật thông tin text bình thường
+                user.TenKH = request.TenKH;
+                user.DienThoai = request.DienThoai;
+                user.Email = request.Email;
+
+                // 3. XỬ LÝ ẢNH (Nếu App Mobile có gửi ảnh lên)
+                if (!string.IsNullOrEmpty(request.AvartaBase64))
+                {
+                    // Tạo tên file mới tránh trùng lặp
+                    string fileName = "Avatar_" + DateTime.Now.Ticks.ToString() + ".jpg";
+
+                    // Đường dẫn lưu file vào thư mục Content/avarta/
+                    string filePath = System.Web.Hosting.HostingEnvironment.MapPath("~/Content/avarta/" + fileName);
+
+                    // Chuyển chuỗi Base64 ngược lại thành file ảnh và lưu vào thư mục
+                    byte[] imageBytes = Convert.FromBase64String(request.AvartaBase64);
+                    System.IO.File.WriteAllBytes(filePath, imageBytes);
+
+                    // Cập nhật tên file mới vào cột Avarta trong Database
+                    user.Avarta = fileName;
+                }
+
+                // 4. Lưu toàn bộ thay đổi xuống SQL Server
+                db.SaveChanges();
+                return Json(new { success = true, message = "Cập nhật thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Lỗi server: " + ex.Message });
+            }
+        }
 
     } 
         
@@ -466,7 +647,9 @@ namespace DoAn_LTW_NhaHang.Controllers
 
     public class LoginRequest
     {
+        public string TaiKhoan { get; set; }  // Thêm dòng này để hứng sđt hoặc email
         public string Email { get; set; }
+        public string DienThoai { get; set; }
         public string Password { get; set; }
     }
     public class RegisterRequest
@@ -484,5 +667,18 @@ namespace DoAn_LTW_NhaHang.Controllers
         public string SoDienThoai { get; set; }
         public string DiaChiChiTiet { get; set; }
         public bool LaMacDinh { get; set; }
+    }
+    public class ExchangeVoucherRequest
+    {
+        public int MaKH { get; set; }
+        public int MaVoucher { get; set; }
+    }
+    public class UpdateProfileMobileRequest
+    {
+        public int MaKH { get; set; }
+        public string TenKH { get; set; }
+        public string DienThoai { get; set; }
+        public string Email { get; set; }
+        public string AvartaBase64 { get; set; } // Chuỗi ảnh được mã hóa
     }
 }

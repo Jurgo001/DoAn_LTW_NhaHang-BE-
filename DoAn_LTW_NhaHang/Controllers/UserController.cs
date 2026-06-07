@@ -214,7 +214,7 @@ namespace DoAn_LTW_NhaHang.Controllers
                         string uniqueFileName = DateTime.Now.Ticks.ToString() + "_" + fileName;
 
                         // Tạo đường dẫn lưu file vào thư mục ~/Content/Images/
-                        string path = Server.MapPath("~/Content/Images/" + uniqueFileName);
+                        string path = Server.MapPath("~/Content/Avarta/" + uniqueFileName);
 
                         // Lưu file vật lý lên Server
                         ImageUpload.SaveAs(path);
