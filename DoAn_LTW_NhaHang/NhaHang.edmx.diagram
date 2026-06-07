@@ -8,7 +8,6 @@
         <EntityTypeShape EntityType="QL_NhaHang.tblChiTietHoaDon" Width="1.5" PointX="5.25" PointY="3.625" IsExpanded="true" />
         <EntityTypeShape EntityType="QL_NhaHang.tblHinhAnh" Width="1.5" PointX="5.25" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="QL_NhaHang.tblHoaDon" Width="1.5" PointX="3" PointY="11.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="QL_NhaHang.tblKhachHang" Width="1.5" PointX="0.75" PointY="9" IsExpanded="true" />
         <EntityTypeShape EntityType="QL_NhaHang.tblLoaiMon" Width="1.5" PointX="0.75" PointY="3.875" IsExpanded="true" />
         <EntityTypeShape EntityType="QL_NhaHang.tblMonAn" Width="1.5" PointX="3" PointY="3.125" IsExpanded="true" />
         <EntityTypeShape EntityType="QL_NhaHang.tblNCC" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
@@ -18,7 +17,6 @@
         <AssociationConnector Association="QL_NhaHang.FK__tblChiTie__MaMon__5535A963" ManuallyRouted="false" />
         <AssociationConnector Association="QL_NhaHang.FK__tblChiTiet__MaHD__5441852A" ManuallyRouted="false" />
         <AssociationConnector Association="QL_NhaHang.FK__tblHinhAn__MaMon__440B1D61" ManuallyRouted="false" />
-        <AssociationConnector Association="QL_NhaHang.FK__tblHoaDon__MaKH__4F7CD00D" ManuallyRouted="false" />
         <AssociationConnector Association="QL_NhaHang.FK__tblHoaDon__MaNV__5070F446" ManuallyRouted="false" />
         <AssociationConnector Association="QL_NhaHang.FK__tblHoaDon__TinhT__5165187F" ManuallyRouted="false" />
         <AssociationConnector Association="QL_NhaHang.FK__tblMonAn__MaLoai__3F466844" ManuallyRouted="false" />
@@ -27,8 +25,12 @@
         <EntityTypeShape EntityType="QL_NhaHang.tblDatBan" Width="1.5" PointX="7.375" PointY="0.75" />
         <EntityTypeShape EntityType="QL_NhaHang.tblLichSuDoiDiem" Width="1.5" PointX="3" PointY="7.25" />
         <EntityTypeShape EntityType="QL_NhaHang.tblVoucher" Width="1.5" PointX="0.75" PointY="23.375" />
-        <AssociationConnector Association="QL_NhaHang.FK__tblLichSuD__MaKH__60A75C0F" />
         <AssociationConnector Association="QL_NhaHang.FK__tblLichSu__MaVou__619B8048" />
+        <EntityTypeShape EntityType="QL_NhaHang.tblDiaChiGiaoHang" Width="1.5" PointX="3" PointY="0.75" />
+        <EntityTypeShape EntityType="QL_NhaHang.tblKhachHang" Width="1.5" PointX="0.75" PointY="6.375" />
+        <AssociationConnector Association="QL_NhaHang.FK_DiaChi_KhachHang" />
+        <AssociationConnector Association="QL_NhaHang.FK__tblHoaDon__MaKH__4BAC3F29" />
+        <AssociationConnector Association="QL_NhaHang.FK__tblLichSuD__MaKH__5BE2A6F2" />
         <EntityTypeShape EntityType="QL_NhaHang.tblLienHe" Width="1.5" PointX="7.375" PointY="4.75" />
       </Diagram>
     </edmx:Diagrams>

@@ -12,17 +12,15 @@ namespace DoAn_LTW_NhaHang
     using System;
     using System.Collections.Generic;
     
-    public partial class tblLichSuDoiDiem
+    public partial class tblDiaChiGiaoHang
     {
-        public int MaLichSu { get; set; }
+        public int MaDiaChi { get; set; }
         public Nullable<int> MaKH { get; set; }
-        public Nullable<int> MaVoucher { get; set; }
-        public Nullable<System.DateTime> NgayDoi { get; set; }
-        public Nullable<int> DiemDaTru { get; set; }
-        public string MaCode { get; set; }
-        public Nullable<bool> TrangThai { get; set; }
+        public string TenNguoiNhan { get; set; }
+        public string SoDienThoai { get; set; }
+        public string DiaChiChiTiet { get; set; }
+        public Nullable<bool> LaMacDinh { get; set; }
     
-        public virtual tblVoucher tblVoucher { get; set; }
         public virtual tblKhachHang tblKhachHang { get; set; }
     }
 }

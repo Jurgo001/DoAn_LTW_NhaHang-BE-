@@ -357,7 +357,6 @@ namespace DoAn_LTW_NhaHang.Controllers
 
                     khCu.TenKH = kh.TenKH;
                     khCu.DienThoai = kh.DienThoai;
-                    khCu.DiaChi = kh.DiaChi;
                     khCu.Email = kh.Email;
 
                     // Chỉ đổi mật khẩu nếu admin nhập vào ô mật khẩu mới

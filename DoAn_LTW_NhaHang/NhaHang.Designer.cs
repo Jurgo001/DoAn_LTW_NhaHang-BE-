@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'D:\TruongKhaHao_2001230214\D_A\Web\DA_LTW\DoAn_LTW_NhaHang\NhaHang.edmx'. 
+﻿// T4 code generation is enabled for model 'D:\ADMIN\Desktop\WEB nha hang 6_6\DoAn_LTW_NhaHang-BE-\DoAn_LTW_NhaHang\NhaHang.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

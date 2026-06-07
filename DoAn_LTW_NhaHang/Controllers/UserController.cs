@@ -200,7 +200,6 @@ namespace DoAn_LTW_NhaHang.Controllers
                 // 1. Cập nhật thông tin cơ bản
                 user.TenKH = formData.TenKH;
                 user.DienThoai = formData.DienThoai;
-                user.DiaChi = formData.DiaChi;
                 user.Email = formData.Email;
 
                 // 2. Xử lý lưu ảnh (NẾU người dùng có chọn ảnh mới)

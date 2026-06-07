@@ -30,8 +30,8 @@ namespace DoAn_LTW_NhaHang
         public Nullable<bool> DaThanhToan { get; set; }
     
         public virtual ICollection<tblChiTietHoaDon> tblChiTietHoaDons { get; set; }
-        public virtual tblKhachHang tblKhachHang { get; set; }
         public virtual tblNhanVien tblNhanVien { get; set; }
         public virtual tblTinhTrang tblTinhTrang { get; set; }
+        public virtual tblKhachHang tblKhachHang { get; set; }
     }
 }

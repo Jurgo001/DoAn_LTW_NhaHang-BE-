@@ -16,6 +16,7 @@ namespace DoAn_LTW_NhaHang
     {
         public tblKhachHang()
         {
+            this.tblDiaChiGiaoHangs = new HashSet<tblDiaChiGiaoHang>();
             this.tblHoaDons = new HashSet<tblHoaDon>();
             this.tblLichSuDoiDiems = new HashSet<tblLichSuDoiDiem>();
         }
@@ -28,8 +29,8 @@ namespace DoAn_LTW_NhaHang
         public string Avarta { get; set; }
         public string DienThoai { get; set; }
         public string Email { get; set; }
-        public string DiaChi { get; set; }
     
+        public virtual ICollection<tblDiaChiGiaoHang> tblDiaChiGiaoHangs { get; set; }
         public virtual ICollection<tblHoaDon> tblHoaDons { get; set; }
         public virtual ICollection<tblLichSuDoiDiem> tblLichSuDoiDiems { get; set; }
     }

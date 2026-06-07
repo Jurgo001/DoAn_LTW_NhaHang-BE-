@@ -28,7 +28,6 @@ namespace DoAn_LTW_NhaHang
         public DbSet<tblChiTietHoaDon> tblChiTietHoaDons { get; set; }
         public DbSet<tblHinhAnh> tblHinhAnhs { get; set; }
         public DbSet<tblHoaDon> tblHoaDons { get; set; }
-        public DbSet<tblKhachHang> tblKhachHangs { get; set; }
         public DbSet<tblLoaiMon> tblLoaiMons { get; set; }
         public DbSet<tblMonAn> tblMonAns { get; set; }
         public DbSet<tblNCC> tblNCCs { get; set; }
@@ -38,6 +37,8 @@ namespace DoAn_LTW_NhaHang
         public DbSet<tblDatBan> tblDatBans { get; set; }
         public DbSet<tblLichSuDoiDiem> tblLichSuDoiDiems { get; set; }
         public DbSet<tblVoucher> tblVouchers { get; set; }
+        public DbSet<tblDiaChiGiaoHang> tblDiaChiGiaoHangs { get; set; }
+        public DbSet<tblKhachHang> tblKhachHangs { get; set; }
         public DbSet<tblLienHe> tblLienHes { get; set; }
     }
 }

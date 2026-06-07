@@ -164,6 +164,9 @@
     <Compile Include="tblDatBan.cs">
       <DependentUpon>NhaHang.tt</DependentUpon>
     </Compile>
+    <Compile Include="tblDiaChiGiaoHang.cs">
+      <DependentUpon>NhaHang.tt</DependentUpon>
+    </Compile>
     <Compile Include="tblHinhAnh.cs">
       <DependentUpon>NhaHang.tt</DependentUpon>
     </Compile>
