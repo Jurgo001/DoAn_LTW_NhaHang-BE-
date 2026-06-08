@@ -517,6 +517,54 @@ namespace DoAn_LTW_NhaHang.Controllers
             }
         }
         [HttpPost]
+        public JsonResult SuaDiaChiGiaoHang(AddressRequest request)
+        {
+            try
+            {
+                // 1. Kiểm tra xem có nhận được ID của địa chỉ cần sửa không
+                if (request == null || !request.MaDiaChi.HasValue)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy mã địa chỉ cần sửa!" });
+                }
+
+                // 2. Tìm địa chỉ cũ trong Database
+                var diaChi = db.tblDiaChiGiaoHangs.Find(request.MaDiaChi.Value);
+                if (diaChi == null)
+                {
+                    return Json(new { success = false, message = "Địa chỉ này không tồn tại!" });
+                }
+
+                // 3. Xử lý logic nếu người dùng chọn địa chỉ này làm Mặc Định
+                if (request.LaMacDinh)
+                {
+                    // Tìm tất cả các địa chỉ mặc định cũ của khách hàng này và gỡ trạng thái mặc định đi
+                    var cacDiaChiCu = db.tblDiaChiGiaoHangs
+                        .Where(d => d.MaKH == request.MaKH && d.MaDiaChi != request.MaDiaChi && d.LaMacDinh == true)
+                        .ToList();
+
+                    foreach (var dc in cacDiaChiCu)
+                    {
+                        dc.LaMacDinh = false;
+                    }
+                }
+
+                // 4. Cập nhật thông tin mới
+                diaChi.TenNguoiNhan = request.TenNguoiNhan;
+                diaChi.SoDienThoai = request.SoDienThoai;
+                diaChi.DiaChiChiTiet = request.DiaChiChiTiet;
+                diaChi.LaMacDinh = request.LaMacDinh;
+
+                // 5. Lưu xuống Database
+                db.SaveChanges();
+
+                return Json(new { success = true, message = "Cập nhật địa chỉ thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Lỗi hệ thống: " + ex.Message });
+            }
+        }
+        [HttpPost]
         public JsonResult DoiVoucher(ExchangeVoucherRequest request)
         {
             try
@@ -662,6 +710,7 @@ namespace DoAn_LTW_NhaHang.Controllers
     }
     public class AddressRequest
     {
+        public int? MaDiaChi { get; set; } // 👉 THÊM DÒNG NÀY ĐỂ NHẬN ID KHI CẬP NHẬT
         public int MaKH { get; set; }
         public string TenNguoiNhan { get; set; }
         public string SoDienThoai { get; set; }
